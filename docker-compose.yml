@@ -32,3 +32,16 @@ services:
     volumes:
       - /path/to/appdata/config:/config #optional
     restart: unless-stopped
+  tautulli:
+    image: tautulli/tautulli
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - <path to data>:/config
+    ports:
+      - 8181:8181
+    restart: unless-stopped
+    
