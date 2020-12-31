@@ -1,6 +1,6 @@
 version: "2.1"
 services:
-  letsencrypt:
+  swag:
     image: ghcr.io/linuxserver/swag
     container_name: swag
     cap_add:
