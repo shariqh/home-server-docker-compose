@@ -11,10 +11,10 @@ services:
       - TZ=America/Chicago
       - URL=<domain>
       - SUBDOMAINS=www,ombi
-      - VALIDATION=http
-      - DUCKDNSTOKEN=<token>
+      - VALIDATION=<http/dns/duckdns>
+      - DUCKDNSTOKEN=<token> #optional unless using duckdns validation
     volumes:
-      - /home/aptalca/appdata/letsencrypt:/config
+      - /home/<user>/appdata/letsencrypt:/config
     ports:
       - 443:443
       - 80:80
@@ -30,7 +30,7 @@ services:
       - TOKEN=<token>
       - LOG_FILE=false #optional
     volumes:
-      - /path/to/appdata/config:/config #optional
+      - /home/<user>/appdata/duckdns:/config #optional unless LOG_FILE set to true
     restart: unless-stopped
   tautulli:
     image: tautulli/tautulli
@@ -40,7 +40,7 @@ services:
       - PGID=1000
       - TZ=America/Chicago
     volumes:
-      - <path to data>:/config
+      - /home/<user>/appdata/tautulli:/config
     ports:
       - 8181:8181
     restart: unless-stopped
