@@ -32,6 +32,21 @@ services:
     volumes:
       - /home/<user>/appdata/duckdns:/config #optional unless LOG_FILE set to true
     restart: unless-stopped
+  duplicati:
+    image: ghcr.io/linuxserver/duplicati
+    container_name: duplicati
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - CLI_ARGS= #optional
+    volumes:
+      - /home/<user>/appdata/duplicati:/config
+      - /home/<user>/appdata/duplicati/backups:/backups #recommended to point to a mounted server
+      - /home/<user>:/source
+    ports:
+      - 8200:8200
+    restart: unless-stopped
   tautulli:
     image: tautulli/tautulli
     container_name: tautulli
