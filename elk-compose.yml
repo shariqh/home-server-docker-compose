@@ -6,9 +6,9 @@ services:
     environment:
       - node.name=es01
       - cluster.name=es-docker-cluster
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node # must set this to avoid bootstrap checks
+      - bootstrap.memory_lock=true # stop memory swap
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # min and max heap size for the app
     ulimits:
       memlock:
         soft: -1
@@ -18,3 +18,19 @@ services:
     ports:
       - 9200:9200
     restart: unless-stopped
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.10.1
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200 # calling elasticseach container through network by its name
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.10.1
+    container_name: logstash
+    volumes:
+      - ~/settings/logstash.yml:/usr/share/logstash/config/logstash.yml
+    ports: 
+      - 9600:9600
+      - 5044:5044 # not sure if this one needs to be exposed yet
