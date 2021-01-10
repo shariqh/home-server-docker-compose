@@ -5,7 +5,8 @@ services:
     container_name: elasticsearch    
     environment:
       - node.name=es01
-      - cluster.name=es-docker-cluster
+      - xpack.security.enabled=true # enabled to get basic auth, remove for anything else
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD} # bootstrap user `elastic` with the password defined
       - discovery.type=single-node # must set this to avoid bootstrap checks
       - bootstrap.memory_lock=true # stop memory swap
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # min and max heap size for the app
@@ -21,12 +22,14 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:7.10.1
     container_name: kibana
+    environment:
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - ELASTICSEARCH_URL=http://elasticsearch:9200 # calling elasticseach container through network by its name
     ports:
       - 5601:5601
-    environment:
-      ELASTICSEARCH_URL: http://elasticsearch:9200 # calling elasticseach container through network by its name
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-  logstash:
+    restart: unless-stopped
+  logstash: # not yet implemented
     image: docker.elastic.co/logstash/logstash:7.10.1
     container_name: logstash
     volumes:
@@ -34,3 +37,26 @@ services:
     ports: 
       - 9600:9600
       - 5044:5044 # not sure if this one needs to be exposed yet
+    restart: unless-stopped
+  # filebeat: # not yet implemented
+  #   image: docker.elastic.co/beats/filebeat:7.10.1
+  #   container_name: filebeat
+  #   environment:
+  #     - setup.kibana.host=kibana:5601 # calling kibana container through network by its name
+  #     - output.elasticsearch.hosts=["elasticsearch:9200"] # calling elasticseach container through network by its name
+  #   volumes:
+
+  #   ports: 
+      
+  #   restart: unless-stopped
+  # metricbeat: # not yet implemented
+  #   image: docker.elastic.co/beats/metricbeat:7.10.1
+  #   container_name: metricbeat
+  #   environment:
+  #     - setup.kibana.host=kibana:5601 # calling kibana container through network by its name
+  #     - output.elasticsearch.hosts=["elasticsearch:9200"] # calling elasticseach container through network by its name
+  #   volumes:
+
+  #   ports:
+
+  #   restart: unless-stopped

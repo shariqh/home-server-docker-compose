@@ -6,7 +6,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Chicago
+      - TZ=${TZ}
     volumes:
       - /home/<user>/appdata/tautulli:/config
     ports:
@@ -18,9 +18,10 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=America/Chicago
+      - TZ=${TZ}
     volumes:
       - /home/<user>/appdata/ombi:/config
     ports:
       - 3579:3579
     restart: unless-stopped
+# can add sonarr, radarr, and jackett for completeness in the future
