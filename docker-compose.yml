@@ -13,7 +13,7 @@ services:
       - SUBDOMAINS=<wildcard/subdomain1,subdomain2>
       - VALIDATION=<http/dns/duckdns>
       - DUCKDNS_TOKEN=${DUCK_TOKEN} #optional unless using duckdns validation
-    volumes:
+    volumes: #todo: replace <user> with env var
       - /home/<user>/appdata/letsencrypt:/config
     ports:
       - 443:443
