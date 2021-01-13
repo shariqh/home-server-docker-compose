@@ -51,6 +51,6 @@ Coming Soon
 #### Logstash
 Check [this](https://www.elastic.co/guide/en/logstash/current/docker-config.html) out for setting up the logstash config. In general, mount the pipeline config `/usr/share/logstash/pipeline/` and the settings config `/usr/share/logstash/pipeline/logstash.conf` OR `/usr/share/logstash/pipeline/logstash.yml`.
 
-[Here's](https://cloudaffaire.com/how-to-create-a-pipeline-in-logstash/) a good explanation of logstash pipelines. Try to create one without any beats first like in (this example)[https://rzetterberg.github.io/nginx-elk-logging.html] if you want to understand what's really happening - you'll have to manually send your logs to from NGINX to logstash.
+[Here's](https://cloudaffaire.com/how-to-create-a-pipeline-in-logstash/) a good explanation of logstash pipelines. Try to create one without any beats first like in [this example](https://rzetterberg.github.io/nginx-elk-logging.html) if you want to understand what's really happening - you'll have to manually send your logs to from NGINX to logstash.
 
 It's all pretty confusing, but utilizing these with Elastic's [offical docs](https://www.elastic.co/guide/en/logstash/current/dir-layout.html#docker-layout) for where the files should be mounted helps.
