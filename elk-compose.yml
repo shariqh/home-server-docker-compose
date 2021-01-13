@@ -5,7 +5,7 @@ services:
     container_name: elasticsearch    
     environment:
       - node.name=es01
-      - xpack.security.enabled=true # enabled to get basic auth, remove for anything else
+      - xpack.security.enabled=true # enabled to get basic auth
       - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD} # bootstrap user `elastic` with the password defined
       - discovery.type=single-node # must set this to avoid bootstrap checks
       - bootstrap.memory_lock=true # stop memory swap
@@ -38,8 +38,7 @@ services:
     volumes:
       - /home/shariq/appdata/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
       - /home/shariq/appdata/logstash/pipeline:/usr/share/logstash/pipeline
-      # mount log files from nginx
-      - /home/shariq/appdata/swag/log/nginx:/logstash_dir/nginx
+      - /home/shariq/appdata/swag/log/nginx:/logstash_dir/nginx # mount log files from nginx
     ports:
       - 5044:5044 # destination port for beats
     restart: unless-stopped
@@ -67,4 +66,3 @@ services:
   #   volumes:
   #   ports:
   #   restart: unless-stopped
-  
