@@ -24,4 +24,4 @@ services:
     ports:
       - 3579:3579
     restart: unless-stopped
-# can add sonarr, radarr, and jackett for completeness in the future
+# add sonarr, radarr, and jackett for completeness in the future

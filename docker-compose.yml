@@ -12,9 +12,9 @@ services:
       - URL=${DUCKDNS_URL}
       - SUBDOMAINS=<wildcard/subdomain1,subdomain2>
       - VALIDATION=<http/dns/duckdns>
-      - DUCKDNS_TOKEN=${DUCK_TOKEN} #optional unless using duckdns validation
-    volumes: #todo: replace <user> with env var
-      - /home/<user>/appdata/letsencrypt:/config
+      - DUCKDNS_TOKEN=${DUCK_TOKEN} # optional unless using duckdns validation
+    volumes: # todo: replace <user> with env var
+      - /home/<user>/appdata/swag:/config
     ports:
       - 443:443
       - 80:80
@@ -28,9 +28,9 @@ services:
       - TZ=${TZ}
       - SUBDOMAINS=subdomain1,subdomain2
       - DUCKDNS_TOKEN=<token>
-      - LOG_FILE=false #optional
+      - LOG_FILE=false # optional
     volumes:
-      - /home/<user>/appdata/duckdns:/config #optional unless LOG_FILE set to true
+      - /home/<user>/appdata/duckdns:/config # optional unless LOG_FILE set to true
     restart: unless-stopped
   duplicati:
     image: ghcr.io/linuxserver/duplicati
@@ -39,10 +39,10 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
-      - CLI_ARGS= #optional
+      - CLI_ARGS= # optional
     volumes:
       - /home/<user>/appdata/duplicati:/config
-      - /home/<user>/appdata/duplicati/backups:/backups #recommended to point to a mounted server
+      - /home/<user>/appdata/duplicati/backups:/backups # recommended to point to a mounted server
       - /home/<user>:/source
     ports:
       - 8200:8200

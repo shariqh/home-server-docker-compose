@@ -38,7 +38,7 @@ services:
     volumes:
       - /home/shariq/appdata/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
       - /home/shariq/appdata/logstash/pipeline:/usr/share/logstash/pipeline
-      - /home/shariq/appdata/swag/log/nginx:/logstash_dir/nginx # mount log files from nginx
+      - /home/shariq/appdata/swag/log/nginx:/logstash_dir/nginx # mount log files from nginx if not using beats
     ports:
       - 5044:5044 # destination port for beats
     restart: unless-stopped
