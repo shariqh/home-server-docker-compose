@@ -6,7 +6,7 @@ services:
     environment:
       - node.name=es01
       - xpack.security.enabled=true # enabled to get basic auth
-      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD} # bootstrap user `elastic` with the password defined
+      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD} # bootstrap user `elastic` with the password defined
       - discovery.type=single-node # must set this to avoid bootstrap checks
       - bootstrap.memory_lock=true # stop memory swap
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # min and max heap size for the app
