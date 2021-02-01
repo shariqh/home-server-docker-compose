@@ -15,7 +15,7 @@ services:
         soft: -1
         hard: -1
     volumes:
-      - /home/<user>/appdata/elasticsearch/data:/usr/share/elasticsearch/data
+      - ./appdata/elasticsearch/data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
     restart: unless-stopped
@@ -36,9 +36,9 @@ services:
 #      labels:
 #        com.example.description: "This label will appear on the logstash service"
     volumes:
-      - /home/shariq/appdata/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
-      - /home/shariq/appdata/logstash/pipeline:/usr/share/logstash/pipeline
-      - /home/shariq/appdata/swag/log/nginx:/logstash_dir/nginx # mount log files from nginx if not using beats
+      - ./appdata/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./appdata/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./appdata/swag/log/nginx:/logstash_dir/nginx # mount log files from nginx if not using beats
     ports:
       - 5044:5044 # destination port for beats
     restart: unless-stopped
