@@ -14,7 +14,7 @@ services:
       - VALIDATION=<http/dns/duckdns>
       - DUCKDNS_TOKEN=${DUCK_TOKEN} # optional unless using duckdns validation
     volumes: # todo: replace <user> with env var
-      - /home/<user>/appdata/swag:/config
+      - ./appdata/swag:/config
     ports:
       - 443:443
       - 80:80
@@ -30,7 +30,7 @@ services:
       - DUCKDNS_TOKEN=<token>
       - LOG_FILE=false # optional
     volumes:
-      - /home/<user>/appdata/duckdns:/config # optional unless LOG_FILE set to true
+      - ./appdata/duckdns:/config # optional unless LOG_FILE set to true
     restart: unless-stopped
   duplicati:
     image: ghcr.io/linuxserver/duplicati
@@ -39,11 +39,11 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
-      - CLI_ARGS= # optional
+      # - CLI_ARGS= # optional, I didn't have any use for them
     volumes:
-      - /home/<user>/appdata/duplicati:/config
-      - /home/<user>/appdata/duplicati/backups:/backups # recommended to point to a mounted server
-      - /home/<user>:/source
+      - ./appdata/duplicati:/config
+      - ./appdata/duplicati/backups:/backups # recommended to point to a mounted server (I used the GUI to back up to Google Drive instead)
+      - ./:/source
     ports:
       - 8200:8200
     restart: unless-stopped
