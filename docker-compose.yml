@@ -14,6 +14,7 @@ services:
       - VALIDATION=duckdns
       - DUCKDNSTOKEN=${DUCKDNS_TOKEN} # optional unless using duckdns validation
     labels:
+      - "co.elastic.logs/enabled=true"
       - "co.elastic.logs/module=nginx"
       - "co.elastic.logs/fileset.stdout=/home/shariq/home-server-docker-compose/appdata/swag/log/nginx/access"
       - "co.elastic.logs/fileset.stderr=/home/shariq/home-server-docker-compose/appdata/swag/log/nginx/error"
