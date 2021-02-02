@@ -15,8 +15,8 @@ services:
       - DUCKDNSTOKEN=${DUCKDNS_TOKEN} # optional unless using duckdns validation
     labels:
       - "co.elastic.logs/module=nginx"
-      - "co.elastic.logs/fileset.stdout=/config/log/nginx/access"
-      - "co.elastic.logs/fileset.stderr=/config/log/nginx/error"
+      - "co.elastic.logs/fileset.stdout=/config/log/nginx/access.log"
+      - "co.elastic.logs/fileset.stderr=/config/log/nginx/error.log"
     volumes: # todo: replace <user> with env var
       - ./appdata/swag:/config
     ports:
