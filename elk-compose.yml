@@ -51,10 +51,11 @@ services:
     user: root
     command: filebeat -e -strict.perms=false # overwrite startup command so it stops checking ownership of the filebeat.yml
     environment:
+      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
       - output.elasticsearch.hosts=["elasticsearch:9200"] # calling elasticseach container through network by its name
-      - strict.perms=false
     volumes:
-      - ./appdata/filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./appdata/filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml
       # needed to access all docker logs (read only) :
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       # needed to access additional informations about containers
