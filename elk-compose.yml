@@ -25,7 +25,7 @@ services:
     image: docker.elastic.co/kibana/kibana:7.10.1
     container_name: kibana
     environment:
-      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
       - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
       - ELASTICSEARCH_URL=http://elasticsearch:9200 # calling elasticseach container through network by its name
     ports:
@@ -36,9 +36,6 @@ services:
       - "elasticsearch"
     image: docker.elastic.co/logstash/logstash:7.10.1
     container_name: logstash
-#    deploy: # need labels for the docker filebeat config to pick up logs here
-#      labels:
-#        com.example.description: "This label will appear on the logstash service"
     volumes:
       - ./appdata/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./appdata/logstash/pipeline:/usr/share/logstash/pipeline

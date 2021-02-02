@@ -11,7 +11,7 @@ filebeat.autodiscover:
       hints.enabled: true
 
 output.elasticsearch:
-  hosts: ['elasticsearch:9200']
-  username: 'elastic'
-  password: ${ELASTICSEARCH_PASSWORD}
+  hosts: '${ELASTICSEARCH_HOSTS:localhost:9200}'
+  username: '${ELASTICSEARCH_USERNAME:elastic }'
+  password: '${ELASTICSEARCH_PASSWORD}'
 
