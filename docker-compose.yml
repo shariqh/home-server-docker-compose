@@ -13,6 +13,10 @@ services:
       - SUBDOMAINS=wildcard
       - VALIDATION=duckdns
       - DUCKDNSTOKEN=${DUCKDNS_TOKEN} # optional unless using duckdns validation
+    labels:
+      - "co.elastic.logs/module=nginx"
+      - "co.elastic.logs/fileset.stdout=/config/log/nginx/access"
+      - "co.elastic.logs/fileset.stderr=/config/log/nginx/error"
     volumes: # todo: replace <user> with env var
       - ./appdata/swag:/config
     ports:
@@ -39,7 +43,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
-      # - CLI_ARGS= # optional, I didn't have any use for them
+      # - CLI_ARGS= # optional
     volumes:
       - ./appdata/duplicati:/config
       - ./appdata/duplicati/backups:/backups # recommended to point to a mounted server (I used the GUI to back up to Google Drive instead)

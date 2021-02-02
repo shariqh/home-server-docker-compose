@@ -1,3 +1,5 @@
+# https://raw.githubusercontent.com/elastic/beats/7.10/deploy/docker/filebeat.docker.yml
+
 filebeat.config:
   modules:
     path: ${path.config}/modules.d/*.yml
@@ -8,10 +10,8 @@ filebeat.autodiscover:
     - type: docker
       hints.enabled: true
 
-processors:
-- add_cloud_metadata: ~
-
 output.elasticsearch:
   hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
   username: 'elastic'
-  password: 'MagicPassword'
+  password: '${ELASTICSEARCH_PASSWORD:}'
+
