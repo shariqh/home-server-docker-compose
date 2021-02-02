@@ -53,7 +53,7 @@ services:
       - output.elasticsearch.hosts=["elasticsearch:9200"] # calling elasticseach container through network by its name
       - strict.perms=false
     volumes:
-      - ./appdata/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./appdata/filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro
       # needed to access all docker logs (read only) :
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       # needed to access additional informations about containers
