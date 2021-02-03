@@ -14,9 +14,9 @@ filebeat.autodiscover:
         config:
           - module: nginx
             access:
-              var.paths: ["/home/shariq/home-server-docker-compose/appdata/swag/log/nginx/access"]
+              var.paths: ["/config/log/nginx/access"]
             error:
-              var.paths: ["/home/shariq/home-server-docker-compose/appdata/swag/log/nginx/error"]              
+              var.paths: ["/config/log/nginx/error"]              
 
 processors:
 - add_docker_metadata: ~
