@@ -40,7 +40,7 @@ Coming Soon
 
 ## elk-compose.yml
 
-Coming Soon
+In Progress...
 
 [This](https://github.com/deviantony/docker-elk) helped a lot
 
@@ -49,6 +49,19 @@ Coming Soon
 #### Logstash
 Check [this](https://www.elastic.co/guide/en/logstash/current/docker-config.html) out for setting up the logstash config. In general, mount the pipeline config `/usr/share/logstash/pipeline/` and the settings config `/usr/share/logstash/pipeline/logstash.conf` OR `/usr/share/logstash/pipeline/logstash.yml`.
 
-[Here's](https://cloudaffaire.com/how-to-create-a-pipeline-in-logstash/) a good explanation of logstash pipelines. Try to create one without any beats first like in [this example](https://rzetterberg.github.io/nginx-elk-logging.html) if you want to understand what's really happening - you'll have to manually send your logs to from NGINX to logstash by mounting the directories. The documentation is pretty confusing, but utilizing these examples with Elastic's [offical docs](https://www.elastic.co/guide/en/logstash/current/dir-layout.html#docker-layout) for where the files should be mounted helps.
+[Here's](https://cloudaffaire.com/how-to-create-a-pipeline-in-logstash/) a good explanation of logstash pipelines. Try to create one without any beats first like in [this example](https://rzetterberg.github.io/nginx-elk-logging.html) if you want to understand what's really happening - you'll have to manually send your logs to from NGINX to logstash by mounting the directories. The documentation is pretty confusing, but utilizing these examples with Elastic's [offical docs](https://www.elastic.co/guide/en/logstash/current/dir-layout.html#docker-layout) for where the files should be mounted helps. Definitely super cumbersome and wouldn't recommend if a beat can do the job for you.
+
+#### Filebeat
+There's few ways to use beats.
+
+1. Harvest with beat -> send to logstash for transformation -> logstash ships to elasticsearch
+2. Harevst with beat -> use beat modules (ie nginx) for transformation -> beat ships to elasticsearch
+
+We're going with the second cause, well, why do more work? We're using autodiscovery hints which are activated by Docker container labels
+
+```yml
+labels:
+      - "co.elastic.logs/enabled=false")
+```
 
 [This](http://blog.immanuelnoel.com/2019/04/12/a-log-analyzer-with-elk-stack-nginx-and-docker/) guide puts it together pretty well actually.
