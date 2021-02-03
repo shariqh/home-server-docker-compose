@@ -42,6 +42,9 @@ services:
     container_name: logstash
     labels:
       - "co.elastic.logs/enabled=false"
+    environment:
+      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
     volumes:
       - ./appdata/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./appdata/logstash/pipeline:/usr/share/logstash/pipeline
