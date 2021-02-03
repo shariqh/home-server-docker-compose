@@ -3,6 +3,10 @@ services:
   swag:
     image: ghcr.io/linuxserver/swag
     container_name: swag
+    labels:
+      - "co.elastic.logs/module=nginx"
+      - "co.elastic.logs/fileset.stdout=/home/shariq/home-server-docker-compose/appdata/swag/log/nginx/access"
+      - "co.elastic.logs/fileset.stderr=/home/shariq/home-server-docker-compose/appdata/swag/log/nginx/error"
     cap_add:
       - NET_ADMIN
     environment:
@@ -13,11 +17,6 @@ services:
       - SUBDOMAINS=wildcard
       - VALIDATION=duckdns
       - DUCKDNSTOKEN=${DUCKDNS_TOKEN} # optional unless using duckdns validation
-    labels:
-      - "co.elastic.logs/enabled=true"
-      - "co.elastic.logs/module=nginx"
-      - "co.elastic.logs/fileset.stdout=/home/shariq/home-server-docker-compose/appdata/swag/log/nginx/access"
-      - "co.elastic.logs/fileset.stderr=/home/shariq/home-server-docker-compose/appdata/swag/log/nginx/error"
     volumes: # todo: replace <user> with env var
       - ./appdata/swag:/config
     ports:
@@ -27,6 +26,8 @@ services:
   duckdns:
     image: ghcr.io/linuxserver/duckdns
     container_name: duckdns
+    labels:
+      - "co.elastic.logs/enabled=false"
     environment:
       - PUID=1000
       - PGID=1000
@@ -40,6 +41,8 @@ services:
   duplicati:
     image: ghcr.io/linuxserver/duplicati
     container_name: duplicati
+    labels:
+      - "co.elastic.logs/enabled=false"
     environment:
       - PUID=1000
       - PGID=1000

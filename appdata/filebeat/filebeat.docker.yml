@@ -1,8 +1,6 @@
 # https://raw.githubusercontent.com/elastic/beats/7.10/deploy/docker/filebeat.docker.yml
 
 filebeat.config:
-  inputs:
-    enabled: false
   modules:
     path: ${path.config}/modules.d/*.yml
     reload.enabled: false
@@ -19,3 +17,4 @@ output.elasticsearch:
   hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
   username: '${ELASTICSEARCH_USERNAME:elastic}' # TODO: make sure env vars are working, this seems odder than usual
   password: '${ELASTICSEARCH_PASSWORD:MagicPassword}'
+  
