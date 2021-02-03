@@ -10,6 +10,13 @@ filebeat.autodiscover:
     - type: docker
       hints.enabled: true
       hints.default_config.enabled: false
+      templates:
+        config:
+          - module: nginx
+            access:
+              var.paths: ["/home/shariq/home-server-docker-compose/appdata/swag/log/nginx/access"]
+            error:
+              var.paths: ["/home/shariq/home-server-docker-compose/appdata/swag/log/nginx/error"]              
 
 processors:
 - add_docker_metadata: ~
