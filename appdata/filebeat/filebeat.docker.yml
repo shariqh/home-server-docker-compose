@@ -9,6 +9,7 @@ filebeat.autodiscover:
   providers:
     - type: docker
       hints.enabled: true
+      hints.default_config.enabled: false
 
 processors:
 - add_docker_metadata: ~
@@ -17,4 +18,3 @@ output.elasticsearch:
   hosts: '${ELASTICSEARCH_HOSTS:elasticsearch:9200}'
   username: '${ELASTICSEARCH_USERNAME:elastic}' # TODO: make sure env vars are working, this seems odder than usual
   password: '${ELASTICSEARCH_PASSWORD:MagicPassword}'
-  

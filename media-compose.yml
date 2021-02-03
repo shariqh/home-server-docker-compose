@@ -3,8 +3,6 @@ services:
   tautulli:
     image: tautulli/tautulli
     container_name: tautulli
-    labels:
-      - "co.elastic.logs/enabled=false"
     environment:
       - PUID=1000
       - PGID=1000
@@ -17,8 +15,6 @@ services:
   ombi:
     image: ghcr.io/linuxserver/ombi
     container_name: ombi
-    labels:
-      - "co.elastic.logs/enabled=false"
     environment:
       - PUID=1000
       - PGID=1000
