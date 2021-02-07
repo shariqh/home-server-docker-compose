@@ -14,9 +14,9 @@ filebeat.autodiscover:
         config:
           - module: nginx
             access:
-              input.paths: ["/config/log/nginx/access.log"]
+              input.paths: ["/logstash_dir/nginx/access.log"]
             error:
-              input.paths: ["/config/log/nginx/error.log"]              
+              input.paths: ["/logstash_dir/nginx/error.log"]              
 
 processors:
 - add_docker_metadata: ~

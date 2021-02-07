@@ -54,14 +54,15 @@ Check [this](https://www.elastic.co/guide/en/logstash/current/docker-config.html
 #### Filebeat
 There's few ways to use beats.
 
-1. Harvest with beat -> send to logstash for transformation -> logstash ships to elasticsearch
-2. Harevst with beat -> use beat modules (ie nginx) for transformation -> beat ships to elasticsearch
+1. Harvest with beat on the stdout/stderr or mounted custom log location -> send to logstash for transformation -> logstash ships to elasticsearch
+2. Harvest with beat on the stdout/stderr or mounted custom log location -> use [beat modules](https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-modules.html) for transformation -> beat ships to elasticsearch
 
-We're going with the second cause, well, why do more work? We're using autodiscovery hints which are activated by Docker container labels
+We did both for learning purposes, but in the future, we're going with the latter because, well, why do more work? We would use autodiscovery hints which are activated by Docker container labels to help trace logs on stdout/stderr.
 
 ```yml
 labels:
-      - "co.elastic.logs/enabled=false")
+	- "co.elastic.logs/enabled=true"
+	- "co.elastic.logs/module=nginx"
 ```
 
 [This](http://blog.immanuelnoel.com/2019/04/12/a-log-analyzer-with-elk-stack-nginx-and-docker/) guide puts it together pretty well actually.
