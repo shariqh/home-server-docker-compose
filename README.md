@@ -32,6 +32,10 @@ Intrustion prevention, since you're exposed... to the internet
 
 Since my Google WiFi routers don't support Dynamic DNS, I use [DuckDNS](https://www.duckdns.org/) to bind my public IP to a DuckDNS DNS and then use the [DuckDNS Docker image](https://hub.docker.com/r/linuxserver/duckdns/) to update my public DNS to DuckDNS every five minutes.
 
+### Authelia
+
+Coming soon, maybe... 2FA with https://github.com/authelia/authelia
+
 ## media-compose.yml
 
 Coming Soon
