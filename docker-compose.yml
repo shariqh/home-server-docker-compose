@@ -32,7 +32,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
-      - SUBDOMAINS=subdomain1,subdomain2
+      - SUBDOMAINS=shariq-dev
       - TOKEN=${DUCKDNS_TOKEN}
       - LOG_FILE=false # optional
     volumes:
