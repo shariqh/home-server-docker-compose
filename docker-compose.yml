@@ -1,5 +1,7 @@
 version: "3"
+
 services:
+
   swag:
     image: ghcr.io/linuxserver/swag
     container_name: swag
@@ -22,6 +24,7 @@ services:
       - 443:443
       - 80:80
     restart: unless-stopped
+
   duckdns:
     image: ghcr.io/linuxserver/duckdns
     container_name: duckdns
@@ -31,10 +34,11 @@ services:
       - TZ=${TZ}
       - SUBDOMAINS=subdomain1,subdomain2
       - TOKEN=${DUCKDNS_TOKEN}
-      - LOG_FILE=false # optional
+      - LOG_FILE=true # optional
     volumes:
       - ./appdata/duckdns:/config # optional unless LOG_FILE set to true
     restart: unless-stopped
+
   duplicati:
     image: ghcr.io/linuxserver/duplicati
     container_name: duplicati
@@ -50,3 +54,4 @@ services:
     ports:
       - 8200:8200
     restart: unless-stopped
+    

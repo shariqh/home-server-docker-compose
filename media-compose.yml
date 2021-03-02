@@ -1,5 +1,7 @@
 version: "3"
+
 services:
+
   tautulli:
     image: tautulli/tautulli
     container_name: tautulli
@@ -12,6 +14,7 @@ services:
     ports:
       - 8181:8181
     restart: unless-stopped
+
   ombi:
     image: ghcr.io/linuxserver/ombi
     container_name: ombi
@@ -24,4 +27,5 @@ services:
     ports:
       - 3579:3579
     restart: unless-stopped
+
 # add sonarr, radarr, and jackett for completeness in the future

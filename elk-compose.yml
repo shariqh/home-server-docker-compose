@@ -51,25 +51,32 @@ services:
       - 5044:5044 # destination port for beats
     restart: unless-stopped
 
-  filebeat:
-    depends_on: 
-      - "elasticsearch"
-    image: docker.elastic.co/beats/filebeat:7.10.1
-    container_name: filebeat
-    user: root
-    command: filebeat -e -strict.perms=false # overwrite startup command so it stops checking ownership of the filebeat.yml
-    environment:
-      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
-      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
-      - output.elasticsearch.hosts=["elasticsearch:9200"] # calling elasticseach container through network by its name
-      - ./appdata/swag/log/nginx:/logstash_dir/nginx # mount log files from nginx since we're not using stdout/stderr for tracking logs
-    volumes:
-      - ./appdata/filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml
-      # needed to access all docker logs (read only) :
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      # needed to access additional informations about containers
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    restart: unless-stopped
+  # curator:
+  #   depends_on;
+  #     - "elasticsearch"
+  #   image: bitnami/elasticsearch-curator:5.8.3
+  #   container_name: curator
+  #   restart: unless-stopped
+  
+  # filebeat:
+  #   depends_on: 
+  #     - "elasticsearch"
+  #   image: docker.elastic.co/beats/filebeat:7.10.1
+  #   container_name: filebeat
+  #   user: root
+  #   command: filebeat -e -strict.perms=false # overwrite startup command so it stops checking ownership of the filebeat.yml
+  #   environment:
+  #     - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
+  #     - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
+  #     - output.elasticsearch.hosts=["elasticsearch:9200"] # calling elasticseach container through network by its name
+  #     - ./appdata/swag/log/nginx:/logstash_dir/nginx # mount log files from nginx since we're not using stdout/stderr for tracking logs
+  #   volumes:
+  #     - ./appdata/filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml
+  #     # needed to access all docker logs (read only) :
+  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
+  #     # needed to access additional informations about containers
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   restart: unless-stopped
 
   # metricbeat: 
   #   image: docker.elastic.co/beats/metricbeat:7.10.1
