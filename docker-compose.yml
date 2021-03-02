@@ -34,7 +34,7 @@ services:
       - TZ=${TZ}
       - SUBDOMAINS=subdomain1,subdomain2
       - TOKEN=${DUCKDNS_TOKEN}
-      - LOG_FILE=true # optional
+      - LOG_FILE=false # optional
     volumes:
       - ./appdata/duckdns:/config # optional unless LOG_FILE set to true
     restart: unless-stopped
