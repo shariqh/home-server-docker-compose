@@ -5,15 +5,17 @@ services:
   plex:
     image: ghcr.io/linuxserver/plex
     container_name: plex
-    network_mode: host
+    network_mode: host # https://docs.docker.com/network/host/
     environment:
       - PUID=1000
       - PGID=1000
       - VERSION=docker
     volumes:
-      - ./appdata/library:/config
-      - ./appdata/tv:/tv
-      - ./appdata/movies:/movies
+      - ./appdata/plex/library:/config
+      - ./appdata/plex/tv:/tv
+      - ./appdata/plex/movies:/movies
+    devices:
+      - /dev/dri:/dev/dri #gives access to Intel Quicksync
     restart: unless-stopped
 
   tautulli:
@@ -42,4 +44,8 @@ services:
       - 3579:3579
     restart: unless-stopped
 
-# add torrent w/openVPN (https://github.com/haugene/docker-transmission-openvpn), sonarr, radarr, and jackett for completeness in the future
+# add torrent w/openVPN (https://github.com/haugene/docker-transmission-openvpn)
+# add sonarr
+# add radarr
+# add bazarr(https://www.bazarr.media/)
+# add jackett

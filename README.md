@@ -1,6 +1,8 @@
 # Getting Started
 
-Each docker-compose will have its own section below to help with getting started as needed. 
+Each docker-compose will have its own section below to help with getting started as needed.
+
+---
 
 1. In general you'll need to add your environment variables either in the shell or in your `/etc/environment` file and source it or restart your box. Otherwise you can always hardcode them in the docker-compose files.
 
@@ -34,9 +36,6 @@ Running a specific docker-compose file
 ```
 docker-compose up -f media-compose.yml -d
 ```
-
-
-# home-server-docker-compose
 
 <!-- Each Image should have a link to the dockerhub page and some documentation (git, starter guide, etc.) -->
 
@@ -77,6 +76,11 @@ Coming soon, maybe... 2FA with https://github.com/authelia/authelia
 ## media-compose.yml
 
 Coming Soon
+
+[Plex](plex.tv)
+Here;s the documentation: https://hub.docker.com/r/linuxserver/plex
+This is important: https://docs.docker.com/network/host/
+
 
 [Tautulli](https://github.com/Tautulli/Tautulli)
 
