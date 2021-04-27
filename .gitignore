@@ -8,6 +8,10 @@ appdata/*
 !appdata/filebeat/filebeat.docker.yml
 !appdata/logstash/pipeline/nginx.conf
 !appdata/logstash/logstash.yml
-!appdata/swag
-!appdata/swag/nginx
-!appdata/swag/nginx/site-confs/*
+
+# Whitelist specified appdata folders
+!appdata/swag/
+appdata/swag/*
+!appdata/swag/nginx/
+appdata/swag/nginx/*
+!appdata/swag/nginx/site-confs/
