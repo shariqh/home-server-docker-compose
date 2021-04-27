@@ -2,6 +2,20 @@ version: "3"
 
 services:
 
+  plex:
+    image: ghcr.io/linuxserver/plex
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+    volumes:
+      - ./appdata/library:/config
+      - ./appdata/tv:/tv
+      - ./appdata/movies:/movies
+    restart: unless-stopped
+
   tautulli:
     image: tautulli/tautulli
     container_name: tautulli
@@ -28,4 +42,4 @@ services:
       - 3579:3579
     restart: unless-stopped
 
-# add sonarr, radarr, and jackett for completeness in the future
+# add torrent w/openVPN (https://github.com/haugene/docker-transmission-openvpn), sonarr, radarr, and jackett for completeness in the future

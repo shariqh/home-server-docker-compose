@@ -6,8 +6,8 @@ services:
     image: ghcr.io/linuxserver/swag
     container_name: swag
     labels:
-      - "co.elastic.logs/enabled=true" # TODO do we need these since we're mounting logs
-      - "co.elastic.logs/module=nginx"
+      # - "co.elastic.logs/enabled=true" # TODO do we need these since we're mounting logs
+      # - "co.elastic.logs/module=nginx"
     cap_add:
       - NET_ADMIN
     environment:
