@@ -1,3 +1,41 @@
+# Getting Started
+
+Each docker-compose will have its own section below to help with getting started as needed. 
+
+1. In general you'll need to add your environment variables either in the shell or in your `/etc/environment` file and source it or restart your box. Otherwise you can always hardcode them in the docker-compose files.
+
+Sample `/etc/environement`
+```
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"
+
+# user added variables
+export TZ='America/Chicago'
+export DUCKDNS_URL='shariq-dev.duckdns.org'
+export DUCKDNS_TOKEN='{enter your token here}'
+export ELASTICSEARCH_USERNAME='elastic'
+export ELASTICSEARCH_PASSWORD='MagicPassword'
+```
+
+Sourcing from an updated file
+```
+source /etc/environment
+```
+
+2. Now you can clone down the repository with HTTPS or SSH if you've set up your key
+
+Cloning with SSH
+```
+git clone https://github.com/shariqh/home-server-docker-compose.git
+```
+
+3. Navigate to your newly cloned repo and run `docker-compose up -d` to run the file names `docker-compose.yml`. You'll need to specify the filename otherwise
+
+Running a specific docker-compose file
+```
+docker-compose up -f media-compose.yml -d
+```
+
+
 # home-server-docker-compose
 
 <!-- Each Image should have a link to the dockerhub page and some documentation (git, starter guide, etc.) -->
