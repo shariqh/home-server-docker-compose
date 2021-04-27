@@ -1,1 +1,13 @@
+# Ignore draw.io files
 *.drawio
+
+# Ignore all appdata files
+appdata/*
+
+# Whitelist specified appdata files
+!appdata/filebeat/filebeat.docker.yml
+!appdata/logstash/pipeline/nginx.conf
+!appdata/logstash/logstash.yml
+!appdata/swag
+!appdata/swag/nginx
+!appdata/swag/nginx/site-confs/*
