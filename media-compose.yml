@@ -11,38 +11,38 @@ services:
       - PGID=1000
       - VERSION=docker
     volumes:
-      - ./appdata/plex/library:/config
+      - ./appdata/plex:/config
       - ./appdata/plex/tv:/tv
       - ./appdata/plex/movies:/movies
     devices:
       - /dev/dri:/dev/dri #gives access to Intel Quicksync
     restart: unless-stopped
 
-  tautulli:
-    image: tautulli/tautulli
-    container_name: tautulli
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-    volumes:
-      - ./appdata/tautulli:/config
-    ports:
-      - 8181:8181
-    restart: unless-stopped
+  # tautulli:
+  #   image: tautulli/tautulli
+  #   container_name: tautulli
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ./appdata/tautulli:/config
+  #   ports:
+  #     - 8181:8181
+  #   restart: unless-stopped
 
-  ombi:
-    image: ghcr.io/linuxserver/ombi
-    container_name: ombi
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-    volumes:
-      - ./appdata/ombi:/config
-    ports:
-      - 3579:3579
-    restart: unless-stopped
+  # ombi:
+  #   image: ghcr.io/linuxserver/ombi
+  #   container_name: ombi
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ./appdata/ombi:/config
+  #   ports:
+  #     - 3579:3579
+  #   restart: unless-stopped
 
 # add torrent w/openVPN (https://github.com/haugene/docker-transmission-openvpn)
 # add sonarr

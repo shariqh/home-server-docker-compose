@@ -34,7 +34,7 @@ git clone https://github.com/shariqh/home-server-docker-compose.git
 
 Running a specific docker-compose file
 ```
-docker-compose up -f media-compose.yml -d
+docker-compose -f media-compose.yml up -d
 ```
 
 <!-- Each Image should have a link to the dockerhub page and some documentation (git, starter guide, etc.) -->
