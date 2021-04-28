@@ -12,8 +12,8 @@ services:
       - VERSION=docker
     volumes:
       - ./appdata/plex:/config
-      - ./appdata/plex/tv:/tv
-      - ./appdata/plex/movies:/movies
+      - /mnt/plex/TV\ Shows:/tv
+      - /mnt/plex/Movies:/movies
     devices:
       - /dev/dri:/dev/dri #gives access to Intel Quicksync
     restart: unless-stopped
