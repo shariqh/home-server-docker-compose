@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
 
   transmission-openvpn:
-    container_name: plex
+    container_name: transmission-openvpn
     cap_add:
         - NET_ADMIN
     volumes:
