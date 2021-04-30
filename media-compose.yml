@@ -19,13 +19,14 @@ services:
     restart: unless-stopped
 
   transmission-openvpn:
+    container_name: plex
     cap_add:
         - NET_ADMIN
     volumes:
         - ./appdata/transmission-openvpn:/data
     environment:
         - OPENVPN_PROVIDER=PIA
-        - OPENVPN_CONFIG=dummy
+        - OPENVPN_CONFIG=us_texas,us_houston,us_denver,us_chicago # One will be randomly selected at startup
         - OPENVPN_USERNAME={PIA_USERNAME}
         - OPENVPN_PASSWORD={PIA_PASSWORD}
         - LOCAL_NETWORK=192.168.86.0/24
