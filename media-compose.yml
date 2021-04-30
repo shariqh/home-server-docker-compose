@@ -27,8 +27,8 @@ services:
     environment:
         - OPENVPN_PROVIDER=PIA
         - OPENVPN_CONFIG=us_texas,us_houston,us_denver,us_chicago # One will be randomly selected at startup
-        - OPENVPN_USERNAME={PIA_USERNAME}
-        - OPENVPN_PASSWORD={PIA_PASSWORD}
+        - OPENVPN_USERNAME=${PIA_USERNAME}
+        - OPENVPN_PASSWORD=${PIA_PASSWORD}
         - LOCAL_NETWORK=192.168.86.0/24
         # - TRANSMISSION_RPC_USERNAME={TRANSMISSION_RPC_USERNAME}
         # - TRANSMISSION_RPC_PASSWORD={TRANSMISSION_RPC_PASSWORD}
