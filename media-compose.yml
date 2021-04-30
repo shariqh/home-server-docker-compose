@@ -1,4 +1,4 @@
-version: "3"
+version: "3.3"
 
 services:
 
@@ -12,10 +12,33 @@ services:
       - VERSION=docker
     volumes:
       - ./appdata/plex:/config
-      - /mnt/plex/TV\ Shows:/tv
+      - /mnt/plex/TV Shows:/tv
       - /mnt/plex/Movies:/movies
     devices:
       - /dev/dri:/dev/dri #gives access to Intel Quicksync
+    restart: unless-stopped
+
+  transmission-openvpn:
+    cap_add:
+        - NET_ADMIN
+    volumes:
+        - ./appdata/transmission-openvpn:/data
+    environment:
+        - OPENVPN_PROVIDER=PIA
+        - OPENVPN_CONFIG=dummy
+        - OPENVPN_USERNAME={PIA_USERNAME}
+        - OPENVPN_PASSWORD={PIA_PASSWORD}
+        - LOCAL_NETWORK=192.168.86.0/24
+        # - TRANSMISSION_RPC_USERNAME={TRANSMISSION_RPC_USERNAME}
+        # - TRANSMISSION_RPC_PASSWORD={TRANSMISSION_RPC_PASSWORD}
+        # - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
+    logging:
+        driver: json-file
+        options:
+            max-size: 10m
+    ports:
+        - '9091:9091'
+    image: haugene/transmission-openvpn
     restart: unless-stopped
 
   # tautulli:
@@ -44,7 +67,6 @@ services:
   #     - 3579:3579
   #   restart: unless-stopped
 
-# add torrent w/openVPN (https://github.com/haugene/docker-transmission-openvpn)
 # add sonarr
 # add radarr
 # add bazarr(https://www.bazarr.media/)

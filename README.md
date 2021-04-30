@@ -78,11 +78,14 @@ Coming soon, maybe... 2FA with https://github.com/authelia/authelia
 Coming Soon
 
 [Plex](plex.tv)
-Here;s the documentation: https://hub.docker.com/r/linuxserver/plex
+Here's the documentation: https://hub.docker.com/r/linuxserver/plex
 This is important: https://docs.docker.com/network/host/
 
+[Transmission + OpenVPN]https://github.com/haugene/docker-transmission-openvpn)
+And docs: https://haugene.github.io/docker-transmission-openvpn/run-container/
 
 [Tautulli](https://github.com/Tautulli/Tautulli)
+
 
 ## elk-compose.yml
 
