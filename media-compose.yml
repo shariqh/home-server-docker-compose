@@ -52,7 +52,7 @@ services:
     volumes:
       - ./appdata/radarr:/config
       - /mnt/plex/Movies:/movies
-      - ./appdata/transmission-openvpn/data/completed:/downloads
+      - ./appdata/transmission-openvpn/completed:/downloads
     ports:
       - 7878:7878
     restart: unless-stopped
