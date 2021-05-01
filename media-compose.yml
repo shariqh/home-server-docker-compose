@@ -52,7 +52,7 @@ services:
     volumes:
       - ./appdata/radarr:/config
       - /mnt/plex/Movies:/movies
-      - ./appdata/transmission-openvpn/completed:/completed # transmission tells radarr that completed downloads are being stored in /data/completed but that only lives in this container so ignore the error or name your folders better than i did
+      - ./appdata/transmission-openvpn/completed:/data/completed
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -67,7 +67,7 @@ services:
     volumes:
       - ./appdata/sonarr:/config
       - /mnt/plex/TV Shows:/tv
-      - ./appdata/transmission-openvpn/completed:/completed # transmission tells radarr that completed downloads are being stored in /data/completed but that only lives in this container so ignore the error or name your folders better than i did
+      - ./appdata/transmission-openvpn/completed:/data/completed
     ports:
       - 8989:8989
     restart: unless-stopped
