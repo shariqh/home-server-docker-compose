@@ -29,10 +29,10 @@ services:
         - OPENVPN_CONFIG=us_texas,us_houston,us_denver,us_chicago # One will be randomly selected at startup
         - OPENVPN_USERNAME=${PIA_USERNAME}
         - OPENVPN_PASSWORD=${PIA_PASSWORD}
-        - LOCAL_NETWORK=192.168.86.0/24
-        # - TRANSMISSION_RPC_USERNAME={TRANSMISSION_RPC_USERNAME}
-        # - TRANSMISSION_RPC_PASSWORD={TRANSMISSION_RPC_PASSWORD}
-        # - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
+        - LOCAL_NETWORK=192.168.86.0/24 # Allows defined IP range to access
+        - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
+        - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
+        - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
     logging:
         driver: json-file
         options:
@@ -40,6 +40,21 @@ services:
     ports:
         - '9091:9091'
     image: haugene/transmission-openvpn
+    restart: unless-stopped
+
+  radarr:
+    image: ghcr.io/linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ./appdata/radarr:/config
+      - /mnt/plex/Movies:/movies
+      - ./appdata/transmission-openvpn/data/completed:/downloads
+    ports:
+      - 7878:7878
     restart: unless-stopped
 
   # tautulli:
