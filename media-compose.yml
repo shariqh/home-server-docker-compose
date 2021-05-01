@@ -19,6 +19,7 @@ services:
     restart: unless-stopped
 
   transmission-openvpn:
+    image: haugene/transmission-openvpn
     container_name: transmission-openvpn
     cap_add:
         - NET_ADMIN
@@ -26,7 +27,7 @@ services:
         - ./appdata/transmission-openvpn:/data
     environment:
         - OPENVPN_PROVIDER=PIA
-        - OPENVPN_CONFIG=us_texas,us_houston,us_denver,us_chicago # One will be randomly selected at startup
+        - OPENVPN_CONFIG=us_texas,us_houston,us_denver,us_chicago # One will be randomly selected at startup - US Houston doesn't seem to give problems ... yet
         - OPENVPN_USERNAME=${PIA_USERNAME}
         - OPENVPN_PASSWORD=${PIA_PASSWORD}
         - LOCAL_NETWORK=192.168.86.0/24 # Allows defined IP range to access
@@ -38,13 +39,12 @@ services:
         options:
             max-size: 10m
     ports:
-        - '9091:9091'
-    image: haugene/transmission-openvpn
+        - 9091:9091
     restart: unless-stopped
 
   radarr:
     image: ghcr.io/linuxserver/radarr
-    container_name: radarr
+    container_name: radarr    
     environment:
       - PUID=1000
       - PGID=1000
@@ -52,9 +52,40 @@ services:
     volumes:
       - ./appdata/radarr:/config
       - /mnt/plex/Movies:/movies
-      - ./appdata/transmission-openvpn/completed:/downloads
+      - ./appdata/transmission-openvpn/completed:/data/completed
     ports:
       - 7878:7878
+    restart: unless-stopped
+
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ./appdata/sonarr:/config
+      - /mnt/plex/TV Shows:/tv
+      - ./appdata/transmission-openvpn/completed:/data/completed
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+
+  jackett:
+    image: ghcr.io/linuxserver/jackett
+    container_name: jackett
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - AUTO_UPDATE=true #optional
+      - RUN_OPTS=<run options here> #optional
+    volumes:
+      - ./appdata/jackett:/config
+      - ./appdata/transmission-openvpn/completed:/data/completed
+    ports:
+      - 9117:9117
     restart: unless-stopped
 
   # tautulli:
@@ -83,7 +114,5 @@ services:
   #     - 3579:3579
   #   restart: unless-stopped
 
-# add sonarr
-# add radarr
+
 # add bazarr(https://www.bazarr.media/)
-# add jackett
