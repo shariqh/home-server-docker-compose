@@ -13,7 +13,7 @@ services:
     volumes:
       - ./appdata/plex:/config
       - /mnt/plex/TV Shows:/tv
-      - /mnt/plex/Movies:/movies
+      - /mnt/media/movies:/movies
     devices:
       - /dev/dri:/dev/dri #gives access to Intel Quicksync
     restart: unless-stopped
@@ -51,7 +51,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ./appdata/radarr:/config
-      - /mnt/plex/Movies:/movies
+      - /mnt/media/movies:/movies
       - ./appdata/transmission-openvpn/completed:/data/completed
     ports:
       - 7878:7878
