@@ -12,7 +12,7 @@ services:
       - VERSION=docker
     volumes:
       - ./appdata/plex:/config
-      - /mnt/plex/TV Shows:/tv
+      - /mnt/media/tv:/tv
       - /mnt/media/movies:/movies
     devices:
       - /dev/dri:/dev/dri #gives access to Intel Quicksync
@@ -66,7 +66,7 @@ services:
       - TZ=${TZ}
     volumes:
       - ./appdata/sonarr:/config
-      - /mnt/plex/TV Shows:/tv
+      - /mnt/media/tv:/tv
       - ./appdata/transmission-openvpn/completed:/data/completed
     ports:
       - 8989:8989
@@ -113,6 +113,3 @@ services:
   #   ports:
   #     - 3579:3579
   #   restart: unless-stopped
-
-
-# add bazarr(https://www.bazarr.media/)
