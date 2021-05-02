@@ -18,29 +18,25 @@ services:
       - /dev/dri:/dev/dri #gives access to Intel Quicksync
     restart: unless-stopped
 
-  transmission-openvpn:
-    image: haugene/transmission-openvpn
-    container_name: transmission-openvpn
-    cap_add:
-        - NET_ADMIN
+  alpine-qbittorrent-openvpn:
+    image: guillaumedsde/alpine-qbittorrent-openvpn:latest
+    container_name: qbittorrent-openvpn
     volumes:
-        - ./appdata/transmission-openvpn:/data
+      - ./appdata/qbittorrent-openvpn:/config
+      - ./appdata/qbittorrent-openvpn/downloads:/downloads
+      # - /etc/localtime:/etc/localtime:ro
     environment:
-        - OPENVPN_PROVIDER=PIA
-        - OPENVPN_CONFIG=us_texas,us_houston,us_denver,us_chicago # One will be randomly selected at startup - US Houston doesn't seem to give problems ... yet
-        - OPENVPN_USERNAME=${PIA_USERNAME}
-        - OPENVPN_PASSWORD=${PIA_PASSWORD}
-        - LOCAL_NETWORK=192.168.86.0/24 # Allows defined IP range to access
-        - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
-        - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
-        - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
-    logging:
-        driver: json-file
-        options:
-            max-size: 10m
+      - OPENVPN_PROVIDER=PIA
+      - OPENVPN_CONFIG=us_texas,us_houston,us_denver,us_chicago
+      - OPENVPN_USERNAME=${PIA_USERNAME}
+      - OPENVPN_PASSWORD=${PIA_PASSWORD}
+      - PUID=1000
+      - PGID=1000
+      - LAN=192.168.86.0/24 # Allows defined IP range to access
     ports:
-        - 9091:9091
-    restart: unless-stopped
+      - 8080:8080
+    cap_add:
+      - NET_ADMIN
 
   radarr:
     image: ghcr.io/linuxserver/radarr
@@ -52,7 +48,7 @@ services:
     volumes:
       - ./appdata/radarr:/config
       - /mnt/media/movies:/movies
-      - ./appdata/transmission-openvpn/completed:/data/completed
+      - ./appdata/qbittorrent-openvpn/qBittorrent/downloads:/config/qBittorrent/downloads/
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -67,7 +63,7 @@ services:
     volumes:
       - ./appdata/sonarr:/config
       - /mnt/media/tv:/tv
-      - ./appdata/transmission-openvpn/completed:/data/completed
+      - ./appdata/qbittorrent-openvpn/qBittorrent/downloads:/config/qBittorrent/downloads/
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -112,4 +108,29 @@ services:
   #     - ./appdata/ombi:/config
   #   ports:
   #     - 3579:3579
+  #   restart: unless-stopped
+
+# PIA has a hard time connecting with transmission (not sure why, so swapping to qbittorent based on this same build)
+  # transmission-openvpn:
+  #   image: haugene/transmission-openvpn
+  #   container_name: transmission-openvpn
+  #   cap_add:
+  #       - NET_ADMIN
+  #   volumes:
+  #       - ./appdata/transmission-openvpn:/data
+  #   environment:
+  #       - OPENVPN_PROVIDER=PIA
+  #       - OPENVPN_CONFIG=us_texas,us_houston,us_denver,us_chicago # One will be randomly selected at startup - US Houston doesn't seem to give problems ... yet
+  #       - OPENVPN_USERNAME=${PIA_USERNAME}
+  #       - OPENVPN_PASSWORD=${PIA_PASSWORD}
+  #       - LOCAL_NETWORK=192.168.86.0/24 # Allows defined IP range to access
+  #       - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
+  #       - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
+  #       - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
+  #   logging:
+  #       driver: json-file
+  #       options:
+  #           max-size: 10m
+  #   ports:
+  #       - 9091:9091
   #   restart: unless-stopped
