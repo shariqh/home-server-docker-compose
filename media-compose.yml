@@ -32,7 +32,7 @@ services:
       - OPENVPN_PASSWORD=${PIA_PASSWORD}
       - PUID=1000
       - PGID=1000
-      - LAN=192.168.86.0/24 # Allows defined IP range to access
+      - LAN=192.168.0.0/24 # Allows defined IP range to access
     ports:
       - 8080:8080
     cap_add:
