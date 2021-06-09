@@ -84,31 +84,31 @@ services:
       - 9117:9117
     restart: unless-stopped
 
-  # tautulli:
-  #   image: tautulli/tautulli
-  #   container_name: tautulli
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=${TZ}
-  #   volumes:
-  #     - ./appdata/tautulli:/config
-  #   ports:
-  #     - 8181:8181
-  #   restart: unless-stopped
+  tautulli:
+    image: tautulli/tautulli
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ./appdata/tautulli:/config
+    ports:
+      - 8181:8181
+    restart: unless-stopped
 
-  # ombi:
-  #   image: ghcr.io/linuxserver/ombi
-  #   container_name: ombi
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=${TZ}
-  #   volumes:
-  #     - ./appdata/ombi:/config
-  #   ports:
-  #     - 3579:3579
-  #   restart: unless-stopped
+  ombi:
+    image: ghcr.io/linuxserver/ombi
+    container_name: ombi
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ./appdata/ombi:/config
+    ports:
+      - 3579:3579
+    restart: unless-stopped
 
 # PIA has a hard time connecting with transmission (not sure why, so swapping to qbittorent based on this same build)
   # transmission-openvpn:
