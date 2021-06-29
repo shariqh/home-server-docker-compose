@@ -4,6 +4,7 @@ services:
 
   strapi:
     image: strapi/strapi
+    container_name: strapi
     volumes:
       - ./app:/srv/app
     ports:
