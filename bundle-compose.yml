@@ -6,6 +6,6 @@ services:
     image: strapi/strapi
     container_name: strapi
     volumes:
-      - ./app:/srv/app
+      - ./appdata/strapi:/srv/app
     ports:
       - 1337:1337
