@@ -37,6 +37,8 @@ Running a specific docker-compose file
 docker-compose -f media-compose.yml up -d
 ```
 
+P.S. use the `containerupdater.sh` to automatically keep your images up to date. Schedule a cronjob for ease of use
+
 <!-- Each Image should have a link to the dockerhub page and some documentation (git, starter guide, etc.) -->
 
 ## docker-compose.yml
