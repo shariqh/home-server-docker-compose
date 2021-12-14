@@ -5,5 +5,5 @@ do
     # restart containers with latest versions
     docker-compose -f "$file" up -d
     # remove images
-    docker image prune
+    docker image prune -f -a
 done
