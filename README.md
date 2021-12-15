@@ -69,7 +69,7 @@ Intrustion prevention, since you're exposed... to the internet
 
 ### DuckDNS
 
-Since my Google WiFi routers don't support Dynamic DNS, I use [DuckDNS](https://www.duckdns.org/) to bind my public IP to a DuckDNS DNS and then use the [DuckDNS Docker image](https://hub.docker.com/r/linuxserver/duckdns/) to update my public DNS to DuckDNS every five minutes.
+Since my WiFi router does not support Dynamic DNS, I use [DuckDNS](https://www.duckdns.org/) to bind my public IP to a DuckDNS DNS and then use the [DuckDNS Docker image](https://hub.docker.com/r/linuxserver/duckdns/) to update my public DNS to DuckDNS every five minutes.
 
 ### Authelia
 
@@ -87,3 +87,8 @@ This is important: https://docs.docker.com/network/host/
 And docs: https://haugene.github.io/docker-transmission-openvpn/run-container/
 
 [Tautulli](https://github.com/Tautulli/Tautulli)
+
+## op-compose.yml
+
+Used to set up 1Password Secrets Automation. First, you'll need to follow [this guide](https://www.bundleapps.io/blog/storing-and-accessing-environment-variables-in-1password) and manually copy the `1password-credentials.json` over. 
+
