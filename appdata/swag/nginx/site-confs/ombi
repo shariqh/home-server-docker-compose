@@ -7,7 +7,7 @@ server {
   include /config/nginx/ssl.conf;
 
   location / {
-    proxy_pass http://172.17.0.1:3579; #ip address for default docker network
+    proxy_pass http://172.17.0.1:3579; #ip address works with default docker networking
     include /config/nginx/proxy.conf;
   }
 }

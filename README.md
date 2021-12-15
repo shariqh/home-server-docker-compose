@@ -90,5 +90,4 @@ And docs: https://haugene.github.io/docker-transmission-openvpn/run-container/
 
 ## op-compose.yml
 
-Used to set up 1Password Secrets Automation. First, you'll need to follow [this guide](https://www.bundleapps.io/blog/storing-and-accessing-environment-variables-in-1password) and manually copy the `1password-credentials.json` over. 
-
+Used to set up 1Password Secrets Automation. First, you'll need to follow [this guide](https://www.bundleapps.io/blog/storing-and-accessing-environment-variables-in-1password) and manually copy the `1password-credentials.json` over. More detailed instuctions can be found on the [official github repo](https://github.com/1Password/connect).

@@ -2,12 +2,12 @@ server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
 
-  server_name movie.*;
+  server_name op.*;
 
   include /config/nginx/ssl.conf;
 
   location / {
-    proxy_pass http://172.17.0.1:7878; #ip address works with default docker networking
+    proxy_pass http://172.17.0.1:8081; #ip address works with default docker networking
     include /config/nginx/proxy.conf;
   }
 }
