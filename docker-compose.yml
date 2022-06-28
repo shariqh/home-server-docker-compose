@@ -2,6 +2,8 @@ version: "3"
 
 services:
 
+# Environment variables can be found in /etc/environment
+
   swag:
     image: ghcr.io/linuxserver/swag
     container_name: swag

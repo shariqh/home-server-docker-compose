@@ -2,6 +2,8 @@ version: "3.3"
 
 services:
 
+# Environment variables can be found in /etc/environment
+
   plex:
     image: ghcr.io/linuxserver/plex
     container_name: plex
@@ -44,7 +46,7 @@ services:
     volumes:
       - ./appdata/sonarr:/config
       - /mnt/media/tv:/tv
-      - ./appdata/qbittorrent-openvpn/qBittorrent/downloads:/config/qBittorrent/downloads/
+      - ./appdata/qbittorrent-openvpn/qBittorrent/downloads:/config/qBittorrent/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 8989:8989
@@ -93,7 +95,7 @@ services:
       - 3579:3579
     restart: unless-stopped
 
-  qbittorrent-openvpn:
+  qbittorrent-wireguard:
     image: binhex/arch-qbittorrentvpn
     container_name: qbittorrent-wireguard
     sysctls: 
@@ -175,4 +177,3 @@ services:
   #   cap_add:
   #     - NET_ADMIN
   #   restart: unless-stopped
-  
