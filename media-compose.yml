@@ -30,7 +30,7 @@ services:
     volumes:
       - ./appdata/radarr:/config
       - /mnt/media/movies:/movies
-      - ./appdata/qbittorrent-openvpn/qBittorrent/downloads:/config/qBittorrent/downloads
+      - ./appdata/qbittorrent-wireguard/downloads:/config/qBittorrent/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 7878:7878
@@ -46,7 +46,7 @@ services:
     volumes:
       - ./appdata/sonarr:/config
       - /mnt/media/tv:/tv
-      - ./appdata/qbittorrent-openvpn/qBittorrent/downloads:/config/qBittorrent/downloads
+      - ./appdata/qbittorrent-wireguard/downloads:/config/qBittorrent/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 8989:8989
@@ -64,7 +64,7 @@ services:
     volumes:
       - ./appdata/jackett:/config
       - ./appdata/transmission-openvpn/data:/data
-      - ./appdata/qbittorrent-openvpn/completed:/data/completed
+      - ./appdata/qbittorrent-wireguard/downloads:/data/completed
     ports:
       - 9117:9117
     restart: unless-stopped
