@@ -18,30 +18,9 @@ services:
       - /dev/dri:/dev/dri # gives access to Intel Quicksync
     restart: unless-stopped
 
-  alpine-qbittorrent-openvpn:
-    image: guillaumedsde/alpine-qbittorrent-openvpn:latest
-    container_name: qbittorrent-openvpn
-    volumes:
-      - ./appdata/qbittorrent-openvpn:/config
-      - ./appdata/qbittorrent-openvpn/downloads:/downloads
-      # - /etc/localtime:/etc/localtime:ro
-    environment:
-      - OPENVPN_PROVIDER=PIA
-      - OPENVPN_CONFIG=us_texas
-      - OPENVPN_USERNAME=${PIA_USERNAME}
-      - OPENVPN_PASSWORD=${PIA_PASSWORD}
-      - PUID=1000
-      - PGID=1000
-      - LAN=192.168.0.0/24 # Allows defined IP range to access
-    ports:
-      - 8080:8080
-    cap_add:
-      - NET_ADMIN
-    restart: unless-stopped
-
   radarr:
     image: ghcr.io/linuxserver/radarr
-    container_name: radarr    
+    container_name: radarr
     environment:
       - PUID=1000
       - PGID=1000
@@ -49,7 +28,8 @@ services:
     volumes:
       - ./appdata/radarr:/config
       - /mnt/media/movies:/movies
-      - ./appdata/qbittorrent-openvpn/qBittorrent/downloads:/config/qBittorrent/downloads/
+      - ./appdata/qbittorrent-openvpn/qBittorrent/downloads:/config/qBittorrent/downloads
+      - ./appdata/transmission-openvpn/data:/data
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -65,6 +45,7 @@ services:
       - ./appdata/sonarr:/config
       - /mnt/media/tv:/tv
       - ./appdata/qbittorrent-openvpn/qBittorrent/downloads:/config/qBittorrent/downloads/
+      - ./appdata/transmission-openvpn/data:/data
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -80,6 +61,7 @@ services:
       - RUN_OPTS=<run options here> # optional
     volumes:
       - ./appdata/jackett:/config
+      - ./appdata/transmission-openvpn/data:/data
       - ./appdata/qbittorrent-openvpn/completed:/data/completed
     ports:
       - 9117:9117
@@ -111,27 +93,85 @@ services:
       - 3579:3579
     restart: unless-stopped
 
-# PIA has a hard time connecting with transmission (not sure why, so swapping to qbittorent based on this same build)
-  # transmission-openvpn:
-  #   image: haugene/transmission-openvpn
-  #   container_name: transmission-openvpn
-  #   cap_add:
-  #       - NET_ADMIN
+  qbittorrent-openvpn:
+    image: binhex/arch-qbittorrentvpn
+    container_name: qbittorrent-wireguard
+    sysctls: 
+      - net.ipv4.conf.all.src_valid_mark=1
+    privileged: true
+    volumes:
+      - ./appdata/qbittorrent-wireguard/downloads:/downloads
+      - ./appdata/qbittorrent-wireguard:/config
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - VPN_ENABLED=yes
+      - VPN_USER=${PIA_USERNAME}
+      - VPN_PASS=${PIA_PASSWORD}
+      - VPN_PROV=pia
+      - VPN_CLIENT=wireguard
+      - STRICT_PORT_FORWARD=yes
+      - ENABLE_PRIVOXY=no
+      - LAN_NETWORK=192.168.0.0/24
+      - NAME_SERVERS=${NAME_SERVERS}
+      - DEBUG=false
+      - WEBUI_PORT=8080
+      - UMASK=000
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 8080:8080
+    restart: unless-stopped
+
+# transmission-openvpn unable to connect to UDP trackers
+# Might be something to do with PIA so out of my hands
+  transmission-openvpn:
+    image: haugene/transmission-openvpn
+    container_name: transmission-openvpn
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./appdata/transmission-openvpn/data:/data
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - OPENVPN_PROVIDER=PIA
+      - OPENVPN_CONFIG=us_west
+      - OPENVPN_USERNAME=${PIA_USERNAME}
+      - OPENVPN_PASSWORD=${PIA_PASSWORD}
+      - LOCAL_NETWORK=192.168.0.0/16 # Allows defined IP range to access
+      - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
+      - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
+      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    ports:
+      - 9091:9091
+    restart: unless-stopped
+
+# alpine-qbittorrent-openvpn unable to connect to SVN to pull PIA configs
+# Might be something to do with my router not being able to pull IPv6 stuff
+# idk not a network guy
+  # alpine-qbittorrent-openvpn:
+  #   image: guillaumedsde/alpine-qbittorrent-openvpn:latest
+  #   container_name: qbittorrent-openvpn
   #   volumes:
-  #       - ./appdata/transmission-openvpn:/data
+  #     - ./appdata/qbittorrent-openvpn:/config
+  #     - ./appdata/qbittorrent-openvpn/downloads:/downloads
+  #     - /etc/localtime:/etc/localtime:ro
   #   environment:
-  #       - OPENVPN_PROVIDER=PIA
-  #       - OPENVPN_CONFIG=us_texas,us_houston,us_denver,us_chicago # One will be randomly selected at startup - US Houston doesn't seem to give problems ... yet
-  #       - OPENVPN_USERNAME=${PIA_USERNAME}
-  #       - OPENVPN_PASSWORD=${PIA_PASSWORD}
-  #       - LOCAL_NETWORK=192.168.86.0/24 # Allows defined IP range to access
-  #       - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
-  #       - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
-  #       - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
-  #   logging:
-  #       driver: json-file
-  #       options:
-  #           max-size: 10m
+  #     - OPENVPN_PROVIDER=PIA
+  #     - OPENVPN_CONFIG=us_west
+  #     - OPENVPN_USERNAME=${PIA_USERNAME}
+  #     - OPENVPN_PASSWORD=${PIA_PASSWORD}
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - LAN=192.168.0.0/24 # Allows defined IP range to access
   #   ports:
-  #       - 9091:9091
+  #     - 8080:8080
+  #   cap_add:
+  #     - NET_ADMIN
   #   restart: unless-stopped
