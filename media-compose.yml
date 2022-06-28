@@ -30,7 +30,7 @@ services:
     volumes:
       - ./appdata/radarr:/config
       - /mnt/media/movies:/movies
-      - ./appdata/qbittorrent-wireguard/downloads:/config/qBittorrent/downloads
+      - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 7878:7878
@@ -46,7 +46,7 @@ services:
     volumes:
       - ./appdata/sonarr:/config
       - /mnt/media/tv:/tv
-      - ./appdata/qbittorrent-wireguard/downloads:/config/qBittorrent/downloads
+      - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 8989:8989
