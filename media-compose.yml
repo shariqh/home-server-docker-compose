@@ -128,31 +128,31 @@ services:
 
 # transmission-openvpn unable to connect to UDP trackers
 # Might be something to do with PIA so out of my hands
-  transmission-openvpn:
-    image: haugene/transmission-openvpn
-    container_name: transmission-openvpn
-    cap_add:
-      - NET_ADMIN
-    volumes:
-      - ./appdata/transmission-openvpn/data:/data
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - OPENVPN_PROVIDER=PIA
-      - OPENVPN_CONFIG=us_west
-      - OPENVPN_USERNAME=${PIA_USERNAME}
-      - OPENVPN_PASSWORD=${PIA_PASSWORD}
-      - LOCAL_NETWORK=192.168.0.0/16 # Allows defined IP range to access
-      - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
-      - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
-      - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-    ports:
-      - 9091:9091
-    restart: unless-stopped
+  # transmission-openvpn:
+  #   image: haugene/transmission-openvpn
+  #   container_name: transmission-openvpn
+  #   cap_add:
+  #     - NET_ADMIN
+  #   volumes:
+  #     - ./appdata/transmission-openvpn/data:/data
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - OPENVPN_PROVIDER=PIA
+  #     - OPENVPN_CONFIG=us_west
+  #     - OPENVPN_USERNAME=${PIA_USERNAME}
+  #     - OPENVPN_PASSWORD=${PIA_PASSWORD}
+  #     - LOCAL_NETWORK=192.168.0.0/16 # Allows defined IP range to access
+  #     - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
+  #     - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
+  #     - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
+  #   logging:
+  #     driver: json-file
+  #     options:
+  #       max-size: 10m
+  #   ports:
+  #     - 9091:9091
+  #   restart: unless-stopped
 
 # alpine-qbittorrent-openvpn unable to connect to SVN to pull PIA configs
 # Might be something to do with my router not being able to pull IPv6 stuff
