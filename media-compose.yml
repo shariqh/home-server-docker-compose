@@ -52,6 +52,24 @@ services:
       - 8989:8989
     restart: unless-stopped
 
+  # mylar:
+    
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - /appdata/readarr:/config
+      - /mnt/media/books:/books #optional
+      - ./appdata/qbittorrent-wireguard/downloads:/downloads
+      - ./appdata/transmission-openvpn/data:/data
+    ports:
+      - 8787:8787
+    restart: unless-stopped
+
   jackett:
     image: ghcr.io/linuxserver/jackett
     container_name: jackett
