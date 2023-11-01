@@ -5,7 +5,7 @@ services:
 # Environment variables can be found in /etc/environment
 
   swag:
-    image: ghcr.io/linuxserver/swag
+    image: lscr.io/linuxserver/swag
     container_name: swag
     cap_add:
       - NET_ADMIN
@@ -13,46 +13,48 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
-      - URL=${DUCKDNS_URL}
+      - URL=${URL}
+      # - URL=${DUCKDNS_URL}
       - SUBDOMAINS=wildcard
-      - VALIDATION=duckdns
-      - DUCKDNSTOKEN=${DUCKDNS_TOKEN} # optional unless using duckdns validation
-    volumes: # todo: replace <user> with env var
+      # - VALIDATION=duckdns
+      - VALIDATION=cloudflare
+      # - DUCKDNSTOKEN=${DUCKDNS_TOKEN} # optional unless using duckdns validation
+    volumes:
       - ./appdata/swag:/config
     ports:
       - 443:443
       - 80:80
     restart: unless-stopped
 
-  duckdns:
-    image: ghcr.io/linuxserver/duckdns
-    container_name: duckdns
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      - SUBDOMAINS=shariq-dev
-      - TOKEN=${DUCKDNS_TOKEN}
-      - LOG_FILE=false # optional
-    volumes:
-      - ./appdata/duckdns:/config # optional unless LOG_FILE set to true
-    restart: unless-stopped
+  # duckdns:
+  #   image: ghcr.io/linuxserver/duckdns
+  #   container_name: duckdns
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #     - SUBDOMAINS=shariq-dev
+  #     - TOKEN=${DUCKDNS_TOKEN}
+  #     - LOG_FILE=false # optional
+  #   volumes:
+  #     - ./appdata/duckdns:/config # optional unless LOG_FILE set to true
+  #   restart: unless-stopped
 
-  duplicati:
-    image: ghcr.io/linuxserver/duplicati
-    container_name: duplicati
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      # - CLI_ARGS= # optional
-    volumes:
-      - ./appdata/duplicati:/config
-      - ./appdata/duplicati/backups:/backups # recommended to point to a mounted server (I used the GUI to back up to Google Drive instead)
-      - ./:/source
-    ports:
-      - 8200:8200
-    restart: unless-stopped
+  # duplicati:
+  #   image: ghcr.io/linuxserver/duplicati
+  #   container_name: duplicati
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #     # - CLI_ARGS= # optional
+  #   volumes:
+  #     - ./appdata/duplicati:/config
+  #     - ./appdata/duplicati/backups:/backups # recommended to point to a mounted server (I used the GUI to back up to Google Drive instead)
+  #     - ./:/source
+  #   ports:
+  #     - 8200:8200
+  #   restart: unless-stopped
     
   autoheal:
     image: willfarrell/autoheal
