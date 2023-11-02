@@ -79,7 +79,7 @@ services:
       - PGID=1000
       - TZ=${TZ}
       - AUTO_UPDATE=true #optional
-      - RUN_OPTS=<run options here> # optional
+      # - RUN_OPTS=<run options here> # optional
     volumes:
       - ./appdata/jackett:/config
       - ./appdata/transmission-openvpn/data:/data

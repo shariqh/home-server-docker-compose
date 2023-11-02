@@ -17,8 +17,10 @@ services:
       # - URL=${DUCKDNS_URL}
       - SUBDOMAINS=wildcard
       # - VALIDATION=duckdns
-      - VALIDATION=cloudflare
+      - VALIDATION=dns
+      - DNSPLUGIN=cloudflare
       # - DUCKDNSTOKEN=${DUCKDNS_TOKEN} # optional unless using duckdns validation
+      # - CF_API_TOKEN=${CF_API_TOKEN}
     volumes:
       - ./appdata/swag:/config
     ports:

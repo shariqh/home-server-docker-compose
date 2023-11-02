@@ -15,3 +15,9 @@ appdata/swag/*
 !appdata/swag/nginx/
 appdata/swag/nginx/*
 !appdata/swag/nginx/site-confs/
+
+# Ignore any backup configs
+backup
+
+# Ignore MacOS stuff
+.DS_Store
