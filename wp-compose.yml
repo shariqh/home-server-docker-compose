@@ -1,0 +1,39 @@
+services:
+
+# Environment variables can be found in /etc/environment
+  wordpress:
+    image: wordpress
+    container_name: wordpress
+    links:
+      - mariadb
+    environment:
+      - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST}
+      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - 8083:80
+    restart: unless-stopped
+    volumes:
+      - ./appdata/wordpress:/var/www/html
+
+  mariadb:
+    image: lscr.io/linuxserver/mariadb
+    container_name: mariadb
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ./appdata/mariadb:/config
+    restart: unless-stopped
+
+
+# Bind to existing network named "default" that already exists (must be started/created first)
+networks:
+  default:
+    external: true

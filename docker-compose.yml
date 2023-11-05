@@ -66,3 +66,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+
+# Stand up network named "default" which can be bound to in other compose files
+networks:
+  default:
+    driver: bridge
+    
