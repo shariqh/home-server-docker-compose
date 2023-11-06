@@ -7,12 +7,11 @@ services:
     links:
       - mariadb
     environment:
-      - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST}
-      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+      - WORDPRESS_DB_HOST=mariadb
       - WORDPRESS_DB_USER=${MYSQL_USER}
       - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
     ports:
-      - 8083:80
+      - 8083:80 #HOST_PORT:CONTAINER_PORT
     restart: unless-stopped
     volumes:
       - ./appdata/wordpress:/var/www/html
@@ -40,4 +39,9 @@ services:
 networks:
   home-server:
     external: true
-    
+
+# export WORDPRESS_DB_HOST='mariadb'
+# export MYSQL_ROOT_PASSWORD='W[t779}(hg;s9'4Bp!@C-(<k'
+# export MYSQL_DATABASE='wp_database'
+# export MYSQL_USER='wp_dbuser'
+# export MYSQL_PASSWORD='3b3KI,,-)WqA9oo8P'£++0R)'
