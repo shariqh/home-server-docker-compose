@@ -1,5 +1,3 @@
-version: "3.3"
-
 services:
 
 # Environment variables can be found in /etc/environment
@@ -20,6 +18,8 @@ services:
     devices:
       - /dev/dri:/dev/dri # gives access to Intel Quicksync
     restart: unless-stopped
+    networks:
+      - home-server
 
   radarr:
     image: ghcr.io/linuxserver/radarr
@@ -36,6 +36,8 @@ services:
     ports:
       - 7878:7878
     restart: unless-stopped
+    networks:
+      - home-server
 
   sonarr:
     image: ghcr.io/linuxserver/sonarr
@@ -52,24 +54,26 @@ services:
     ports:
       - 8989:8989
     restart: unless-stopped
-
-  # mylar:
+    networks:
+      - home-server
     
-  readarr:
-    image: lscr.io/linuxserver/readarr:develop
-    container_name: readarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-    volumes:
-      - /appdata/readarr:/config
-      - /mnt/media/books:/books #optional
-      - ./appdata/qbittorrent-wireguard/downloads:/downloads
-      - ./appdata/transmission-openvpn/data:/data
-    ports:
-      - 8787:8787
-    restart: unless-stopped
+  # readarr:
+  #   image: lscr.io/linuxserver/readarr:develop
+  #   container_name: readarr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - /appdata/readarr:/config
+  #     - /mnt/media/books:/books #optional
+  #     - ./appdata/qbittorrent-wireguard/downloads:/downloads
+  #     - ./appdata/transmission-openvpn/data:/data
+  #   ports:
+  #     - 8787:8787
+  #   restart: unless-stopped
+  #   networks:
+  #     - home-server
 
   jackett:
     image: ghcr.io/linuxserver/jackett
@@ -87,6 +91,8 @@ services:
     ports:
       - 9117:9117
     restart: unless-stopped
+    networks:
+      - home-server
 
   tautulli:
     image: tautulli/tautulli
@@ -100,6 +106,8 @@ services:
     ports:
       - 8181:8181
     restart: unless-stopped
+    networks:
+      - home-server
 
   ombi:
     image: ghcr.io/linuxserver/ombi
@@ -113,6 +121,8 @@ services:
     ports:
       - 3579:3579
     restart: unless-stopped
+    networks:
+      - home-server
 
   qbittorrent-wireguard:
     image: binhex/arch-qbittorrentvpn
@@ -144,6 +154,8 @@ services:
       - 6881:6881/udp
       - 8080:8080
     restart: unless-stopped
+    networks:
+      - home-server
 
 # transmission-openvpn unable to connect to UDP trackers
 # Might be something to do with PIA so out of my hands
@@ -196,3 +208,8 @@ services:
   #   cap_add:
   #     - NET_ADMIN
   #   restart: unless-stopped
+
+# Bind to existing external network named "home-server" that already exists (must be started/created first)
+networks:
+  home-server:
+    external: true
