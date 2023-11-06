@@ -18,8 +18,6 @@ services:
     devices:
       - /dev/dri:/dev/dri # gives access to Intel Quicksync
     restart: unless-stopped
-    networks:
-      - home-server
 
   radarr:
     image: ghcr.io/linuxserver/radarr
