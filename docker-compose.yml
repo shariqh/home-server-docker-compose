@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-
 # Environment variables can be found in /etc/environment
 
   swag:
@@ -67,8 +66,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
 
-# Stand up network named "default" which can be bound to in other compose files
+# Rename default network to "home-server" which can be bound to in other compose files
 networks:
   default:
-    driver: bridge
-    
+    name: home-server

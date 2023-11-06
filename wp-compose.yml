@@ -16,6 +16,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./appdata/wordpress:/var/www/html
+    networks:
+      - home-server
 
   mariadb:
     image: lscr.io/linuxserver/mariadb
@@ -31,9 +33,10 @@ services:
     volumes:
       - ./appdata/mariadb:/config
     restart: unless-stopped
+    networks:
+      - home-server
 
-
-# Bind to existing network named "default" that already exists (must be started/created first)
+# Bind to existing external network named "home-server" that already exists (must be started/created first)
 networks:
-  default:
+  home-server:
     external: true
