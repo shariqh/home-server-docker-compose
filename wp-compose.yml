@@ -5,6 +5,8 @@ services:
     image: wordpress
     container_name: wordpress
     links:
+      - mariadb    
+    depends_on:
       - mariadb
     environment:
       - WORDPRESS_DB_HOST=mariadb
@@ -39,9 +41,3 @@ services:
 networks:
   home-server:
     external: true
-
-# export WORDPRESS_DB_HOST='mariadb'
-# export MYSQL_ROOT_PASSWORD='W[t779}(hg;s9'4Bp!@C-(<k'
-# export MYSQL_DATABASE='wp_database'
-# export MYSQL_USER='wp_dbuser'
-# export MYSQL_PASSWORD='3b3KI,,-)WqA9oo8P'£++0R)'
