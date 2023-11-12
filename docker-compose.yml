@@ -1,29 +1,29 @@
 services:
 # Environment variables can be found in /etc/environment
 
-  swag:
-    image: lscr.io/linuxserver/swag
-    container_name: swag
-    cap_add:
-      - NET_ADMIN
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-      - URL=${URL}
-      # - URL=${DUCKDNS_URL}
-      - SUBDOMAINS=wildcard
-      # - VALIDATION=duckdns
-      - VALIDATION=dns
-      - DNSPLUGIN=cloudflare
-      # - DUCKDNSTOKEN=${DUCKDNS_TOKEN} # optional unless using duckdns validation
-      # - CF_API_TOKEN=${CF_API_TOKEN}
-    volumes:
-      - ./appdata/swag:/config
-    ports:
-      - 443:443
-      - 80:80
-    restart: unless-stopped
+  # swag:
+  #   image: lscr.io/linuxserver/swag
+  #   container_name: swag
+  #   cap_add:
+  #     - NET_ADMIN
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #     - URL=${URL}
+  #     # - URL=${DUCKDNS_URL}
+  #     - SUBDOMAINS=wildcard
+  #     # - VALIDATION=duckdns
+  #     - VALIDATION=dns
+  #     - DNSPLUGIN=cloudflare
+  #     # - DUCKDNSTOKEN=${DUCKDNS_TOKEN} # optional unless using duckdns validation
+  #     # - CF_API_TOKEN=${CF_API_TOKEN}
+  #   volumes:
+  #     - ./appdata/swag:/config
+  #   ports:
+  #     - 443:443
+  #     - 80:80
+  #   restart: unless-stopped
 
   # duckdns:
   #   image: ghcr.io/linuxserver/duckdns
@@ -65,6 +65,6 @@ services:
     restart: unless-stopped
 
 # Rename default network to "home-server" which can be bound to in other compose files
-networks:
-  default:
-    name: home-server
+# networks:
+#   default:
+#     name: home-server

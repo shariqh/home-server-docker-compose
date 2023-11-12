@@ -34,8 +34,6 @@ services:
     ports:
       - 7878:7878
     restart: unless-stopped
-    networks:
-      - home-server
 
   sonarr:
     image: ghcr.io/linuxserver/sonarr
@@ -52,9 +50,7 @@ services:
     ports:
       - 8989:8989
     restart: unless-stopped
-    networks:
-      - home-server
-    
+
   # readarr:
   #   image: lscr.io/linuxserver/readarr:develop
   #   container_name: readarr
@@ -89,38 +85,32 @@ services:
     ports:
       - 9117:9117
     restart: unless-stopped
-    networks:
-      - home-server
 
-  tautulli:
-    image: tautulli/tautulli
-    container_name: tautulli
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-    volumes:
-      - ./appdata/tautulli:/config
-    ports:
-      - 8181:8181
-    restart: unless-stopped
-    networks:
-      - home-server
+  # tautulli:
+  #   image: tautulli/tautulli
+  #   container_name: tautulli
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ./appdata/tautulli:/config
+  #   ports:
+  #     - 8181:8181
+  #   restart: unless-stopped
 
-  ombi:
-    image: ghcr.io/linuxserver/ombi
-    container_name: ombi
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${TZ}
-    volumes:
-      - ./appdata/ombi:/config
-    ports:
-      - 3579:3579
-    restart: unless-stopped
-    networks:
-      - home-server
+  # ombi:
+  #   image: ghcr.io/linuxserver/ombi
+  #   container_name: ombi
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ./appdata/ombi:/config
+  #   ports:
+  #     - 3579:3579
+  #   restart: unless-stopped
 
   qbittorrent-wireguard:
     image: binhex/arch-qbittorrentvpn
@@ -152,8 +142,6 @@ services:
       - 6881:6881/udp
       - 8080:8080
     restart: unless-stopped
-    networks:
-      - home-server
 
 # transmission-openvpn unable to connect to UDP trackers
 # Might be something to do with PIA so out of my hands
@@ -208,6 +196,6 @@ services:
   #   restart: unless-stopped
 
 # Bind to existing external network named "home-server" that already exists (must be started/created first)
-networks:
-  home-server:
-    external: true
+# networks:
+#   home-server:
+#     external: true
