@@ -4,12 +4,12 @@
 # Ignore all appdata files
 appdata/*
 
-# Whitelist specified appdata files
+# Allowlist specified appdata files
 !appdata/filebeat/filebeat.docker.yml
 !appdata/logstash/pipeline/nginx.conf
 !appdata/logstash/logstash.yml
 
-# Whitelist specified appdata folders
+# Allowlist specified appdata folders
 !appdata/swag/
 appdata/swag/*
 !appdata/swag/nginx/
