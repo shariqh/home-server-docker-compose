@@ -14,6 +14,7 @@ services:
       - /mnt/media/tv:/tv
       - /mnt/media/movies:/movies
       - /mnt/media/books:/books
+      - /mnt/media/music:/music
     devices:
       - /dev/dri:/dev/dri # gives access to Intel Quicksync
     restart: unless-stopped
