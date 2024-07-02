@@ -10,11 +10,11 @@ services:
       - PGID=1000
       - VERSION=docker
     volumes:
-      - ./appdata/plex:/config
       - /mnt/media/tv:/tv
       - /mnt/media/movies:/movies
       - /mnt/media/books:/books
       - /mnt/media/music:/music
+      - ./appdata/plex:/config
     devices:
       - /dev/dri:/dev/dri # gives access to Intel Quicksync
     restart: unless-stopped
@@ -27,8 +27,8 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ./appdata/radarr:/config
       - /mnt/media/movies:/movies
+      - ./appdata/radarr:/config
       - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
@@ -43,8 +43,8 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ./appdata/sonarr:/config
       - /mnt/media/tv:/tv
+      - ./appdata/sonarr:/config
       - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
@@ -59,8 +59,10 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ./appdata/lidarr:/config
       - /mnt/media/music:/music
+      - ./appdata/lidarr/custom-services.d:/custom-services.d
+      - ./appdata/lidarr/custom-cont-init.d:/custom-cont-init.d
+      - ./appdata/lidarr:/config
       - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:

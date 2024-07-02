@@ -8,6 +8,7 @@ appdata/*
 !appdata/filebeat/filebeat.docker.yml
 !appdata/logstash/pipeline/nginx.conf
 !appdata/logstash/logstash.yml
+!appdata/lidarr/
 
 # Allowlist specified appdata folders
 !appdata/swag/
