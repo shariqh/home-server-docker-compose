@@ -28,8 +28,9 @@ services:
       - TZ=${TZ}
     volumes:
       - /mnt/media/movies:/movies
+      - /mnt/media/downloads:/downloads
       - ./appdata/radarr:/config
-      - ./appdata/qbittorrent-wireguard/downloads:/downloads
+      # - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 7878:7878
@@ -44,8 +45,9 @@ services:
       - TZ=${TZ}
     volumes:
       - /mnt/media/tv:/tv
+      - /mnt/media/downloads:/downloads
       - ./appdata/sonarr:/config
-      - ./appdata/qbittorrent-wireguard/downloads:/downloads
+      # - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 8989:8989
@@ -60,10 +62,11 @@ services:
       - TZ=${TZ}
     volumes:
       - /mnt/media/music:/music
+      - /mnt/media/downloads:/downloads
       - ./appdata/lidarr/custom-services.d:/custom-services.d
       - ./appdata/lidarr/custom-cont-init.d:/custom-cont-init.d
       - ./appdata/lidarr:/config
-      - ./appdata/qbittorrent-wireguard/downloads:/downloads
+      # - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 8686:8686
@@ -78,8 +81,9 @@ services:
   #     - TZ=${TZ}
   #   volumes:
   #     - /appdata/readarr:/config
+  #     - /mnt/media/downloads:/downloads
   #     - /mnt/media/books:/books #optional
-  #     - ./appdata/qbittorrent-wireguard/downloads:/downloads
+  #   # - ./appdata/qbittorrent-wireguard/downloads:/downloads
   #     - ./appdata/transmission-openvpn/data:/data
   #   ports:
   #     - 8787:8787
@@ -97,9 +101,10 @@ services:
       - AUTO_UPDATE=true #optional
       # - RUN_OPTS=<run options here> # optional
     volumes:
+      - /mnt/media/downloads:/data/completed
       - ./appdata/jackett:/config
       - ./appdata/transmission-openvpn/data:/data
-      - ./appdata/qbittorrent-wireguard/downloads:/data/completed
+      # - ./appdata/qbittorrent-wireguard/downloads:/data/completed
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -111,7 +116,8 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     privileged: true
     volumes:
-      - ./appdata/qbittorrent-wireguard/downloads:/downloads
+      - /mnt/media/downloads:/downloads
+      # - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/qbittorrent-wireguard:/config
       - /etc/localtime:/etc/localtime:ro
     environment:
