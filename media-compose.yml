@@ -14,6 +14,7 @@ services:
       - /mnt/media/movies:/movies
       - /mnt/media/books:/books
       - /mnt/media/music:/music
+      - /mnt/media/courses:/courses
       - ./appdata/plex:/config
     devices:
       - /dev/dri:/dev/dri # gives access to Intel Quicksync
@@ -30,7 +31,6 @@ services:
       - /mnt/media/movies:/movies
       - /mnt/media/downloads:/downloads
       - ./appdata/radarr:/config
-      # - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 7878:7878
@@ -47,7 +47,6 @@ services:
       - /mnt/media/tv:/tv
       - /mnt/media/downloads:/downloads
       - ./appdata/sonarr:/config
-      # - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 8989:8989
@@ -66,30 +65,10 @@ services:
       - ./appdata/lidarr/custom-services.d:/custom-services.d
       - ./appdata/lidarr/custom-cont-init.d:/custom-cont-init.d
       - ./appdata/lidarr:/config
-      # - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/transmission-openvpn/data:/data
     ports:
       - 8686:8686
     restart: unless-stopped
-
-  # readarr:
-  #   image: lscr.io/linuxserver/readarr:develop
-  #   container_name: readarr
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=${TZ}
-  #   volumes:
-  #     - /appdata/readarr:/config
-  #     - /mnt/media/downloads:/downloads
-  #     - /mnt/media/books:/books #optional
-  #   # - ./appdata/qbittorrent-wireguard/downloads:/downloads
-  #     - ./appdata/transmission-openvpn/data:/data
-  #   ports:
-  #     - 8787:8787
-  #   restart: unless-stopped
-  #   networks:
-  #     - home-server
 
   jackett:
     image: ghcr.io/linuxserver/jackett
@@ -99,12 +78,10 @@ services:
       - PGID=1000
       - TZ=${TZ}
       - AUTO_UPDATE=true #optional
-      # - RUN_OPTS=<run options here> # optional
     volumes:
       - /mnt/media/downloads:/data/completed
       - ./appdata/jackett:/config
       - ./appdata/transmission-openvpn/data:/data
-      # - ./appdata/qbittorrent-wireguard/downloads:/data/completed
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -117,7 +94,6 @@ services:
     privileged: true
     volumes:
       - /mnt/media/downloads:/downloads
-      # - ./appdata/qbittorrent-wireguard/downloads:/downloads
       - ./appdata/qbittorrent-wireguard:/config
       - /etc/localtime:/etc/localtime:ro
     environment:
@@ -140,6 +116,25 @@ services:
       - 6881:6881/udp
       - 8080:8080
     restart: unless-stopped
+
+  # readarr:
+  #   image: lscr.io/linuxserver/readarr:develop
+  #   container_name: readarr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - /appdata/readarr:/config
+  #     - /mnt/media/downloads:/downloads
+  #     - /mnt/media/books:/books #optional
+  #   # - ./appdata/qbittorrent-wireguard/downloads:/downloads
+  #     - ./appdata/transmission-openvpn/data:/data
+  #   ports:
+  #     - 8787:8787
+  #   restart: unless-stopped
+  #   networks:
+  #     - home-server
 
   # tautulli:
   #   image: tautulli/tautulli
@@ -166,58 +161,6 @@ services:
   #   ports:
   #     - 3579:3579
   #   restart: unless-stopped
-# transmission-openvpn unable to connect to UDP trackers
-# Might be something to do with PIA so out of my hands
-# transmission-openvpn:
-#   image: haugene/transmission-openvpn
-#   container_name: transmission-openvpn
-#   cap_add:
-#     - NET_ADMIN
-#   volumes:
-#     - ./appdata/transmission-openvpn/data:/data
-#   environment:
-#     - PUID=1000
-#     - PGID=1000
-#     - OPENVPN_PROVIDER=PIA
-#     - OPENVPN_CONFIG=us_west
-#     - OPENVPN_USERNAME=${PIA_USERNAME}
-#     - OPENVPN_PASSWORD=${PIA_PASSWORD}
-#     - LOCAL_NETWORK=192.168.0.0/16 # Allows defined IP range to access
-#     - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
-#     - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
-#     - TRANSMISSION_RPC_AUTHENTICATION_REQUIRED=true
-#   logging:
-#     driver: json-file
-#     options:
-#       max-size: 10m
-#   ports:
-#     - 9091:9091
-#   restart: unless-stopped
-
-# alpine-qbittorrent-openvpn unable to connect to SVN to pull PIA configs
-# Might be something to do with my router not being able to pull IPv6 stuff
-# idk not a network guy
-# alpine-qbittorrent-openvpn:
-#   image: guillaumedsde/alpine-qbittorrent-openvpn:latest
-#   container_name: qbittorrent-openvpn
-#   volumes:
-#     - ./appdata/qbittorrent-openvpn:/config
-#     - ./appdata/qbittorrent-openvpn/downloads:/downloads
-#     - /etc/localtime:/etc/localtime:ro
-#   environment:
-#     - OPENVPN_PROVIDER=PIA
-#     - OPENVPN_CONFIG=us_west
-#     - OPENVPN_USERNAME=${PIA_USERNAME}
-#     - OPENVPN_PASSWORD=${PIA_PASSWORD}
-#     - PUID=1000
-#     - PGID=1000
-#     - LAN=192.168.0.0/24 # Allows defined IP range to access
-#   ports:
-#     - 8080:8080
-#   cap_add:
-#     - NET_ADMIN
-#   restart: unless-stopped
-
 # Bind to existing external network named "home-server" that already exists (must be started/created first)
 # networks:
 #   home-server:

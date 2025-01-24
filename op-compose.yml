@@ -9,7 +9,7 @@
 #       - data:/home/opuser/.op/data
 #   op-connect-sync:
 #     image: 1password/connect-sync:latest
-#     container_name: op-connect-sync    
+#     container_name: op-connect-sync
 #     ports:
 #       - 8082:8080
 #     volumes:
