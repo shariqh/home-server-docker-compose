@@ -1,6 +1,35 @@
 services:
 # Environment variables can be found in /etc/environment
 
+  autoheal:
+    image: willfarrell/autoheal
+    container_name: autoheal
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=all
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  beszel:
+    image: henrygd/beszel:latest
+    container_name: beszel
+    restart: unless-stopped
+    ports:
+      - 8090:8090
+    volumes:
+      - ./beszel_data:/beszel_data
+
+  beszel-agent:
+    image: henrygd/beszel-agent:latest
+    container_name: beszel-agent
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      PORT: 45876
+      # Do not remove quotes around the key
+      KEY: ${BEZSEL_AGENT_KEY}
+
   # swag:
   #   image: lscr.io/linuxserver/swag
   #   container_name: swag
@@ -54,15 +83,6 @@ services:
   #   ports:
   #     - 8200:8200
   #   restart: unless-stopped
-    
-  autoheal:
-    image: willfarrell/autoheal
-    container_name: autoheal
-    environment:
-      - AUTOHEAL_CONTAINER_LABEL=all
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
 
 # Rename default network to "home-server" which can be bound to in other compose files
 # networks:
