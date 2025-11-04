@@ -18,8 +18,6 @@ services:
     restart: unless-stopped
     privileged: true
     network_mode: host
-    ports:
-      - "8123:8123"
     volumes:
       - ./appdata/homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
@@ -42,7 +40,7 @@ services:
       - ./appdata/zwave-js-ui:/usr/src/app/store
     environment:
       - TZ=${TZ}
-      
+
   autoheal:
     image: willfarrell/autoheal
     container_name: autoheal
