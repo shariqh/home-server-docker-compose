@@ -1,6 +1,16 @@
 services:
 # Environment variables can be found in /etc/environment
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./appdata/portainer:/data
+
   autoheal:
     image: willfarrell/autoheal
     container_name: autoheal
