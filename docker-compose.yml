@@ -68,7 +68,7 @@ services:
     environment:
       PORT: 45876
       # Do not remove quotes around the key
-      KEY: ${BEZSEL_AGENT_KEY}
+      KEY: ${BESZEL_AGENT_KEY}
 
   # swag:
   #   image: lscr.io/linuxserver/swag

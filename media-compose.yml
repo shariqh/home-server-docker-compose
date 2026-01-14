@@ -31,7 +31,6 @@ services:
       - /mnt/media/movies:/movies
       - /mnt/media/downloads:/downloads
       - ./appdata/radarr:/config
-      - ./appdata/transmission-openvpn/data:/data
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -47,7 +46,6 @@ services:
       - /mnt/media/tv:/tv
       - /mnt/media/downloads:/downloads
       - ./appdata/sonarr:/config
-      - ./appdata/transmission-openvpn/data:/data
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -65,7 +63,6 @@ services:
       - ./appdata/lidarr/custom-services.d:/custom-services.d
       - ./appdata/lidarr/custom-cont-init.d:/custom-cont-init.d
       - ./appdata/lidarr:/config
-      - ./appdata/transmission-openvpn/data:/data
     ports:
       - 8686:8686
     restart: unless-stopped
@@ -81,7 +78,6 @@ services:
     volumes:
       - /mnt/media/downloads:/data/completed
       - ./appdata/jackett:/config
-      - ./appdata/transmission-openvpn/data:/data
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -104,7 +100,7 @@ services:
       - VPN_CLIENT=wireguard
       - STRICT_PORT_FORWARD=yes
       - ENABLE_PRIVOXY=no
-      - LAN_NETWORK=192.168.0.0/24
+      - LAN_NETWORK=192.168.1.0/24
       - NAME_SERVERS=${NAME_SERVERS}
       - DEBUG=false
       - WEBUI_PORT=8080
