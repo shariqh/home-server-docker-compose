@@ -104,7 +104,7 @@ services:
       - VPN_CLIENT=wireguard
       - STRICT_PORT_FORWARD=yes
       - ENABLE_PRIVOXY=no
-      - LAN_NETWORK=192.168.0.0/24
+      - LAN_NETWORK=192.168.1.0/24
       - NAME_SERVERS=${NAME_SERVERS}
       - DEBUG=false
       - WEBUI_PORT=8080
