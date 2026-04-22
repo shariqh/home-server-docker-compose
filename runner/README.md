@@ -8,26 +8,38 @@ Because the 1Password CLI is baked in, workflows can resolve secrets via `op run
 
 ## First-time setup
 
-1. **GitHub PAT** with `repo` scope (or fine-grained token scoped to the target repo):
-   https://github.com/settings/tokens/new
+1. **Install `op` CLI** on the host (Debian/Ubuntu):
+   ```bash
+   curl -sS https://downloads.1password.com/linux/keys/1password.asc \
+     | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+   echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' \
+     | sudo tee /etc/apt/sources.list.d/1password.list
+   sudo apt update && sudo apt install -y 1password-cli
+   op --version  # confirm 2.x
+   ```
 
-2. **1Password service account** (Settings → Developer → Service Accounts → Create).
-   - Grant read-only access to only the vaults the runner needs.
+2. **GitHub PAT** with `repo` scope (or fine-grained token scoped to the target repo):
+   https://github.com/settings/tokens/new
+   Save the `ghp_...` value as the `github_runner_pat` field in your `Home Server` 1Password item — it'll be resolved at container-up time via `secrets.env`.
+
+3. **1Password service account** (Settings → Developer → Service Accounts → Create).
+   - Grant read-only access to the `Home Server` vault.
    - Copy the `ops_...` token.
 
-3. **Populate `runner.env`**:
+4. **Populate `runner.env`** (plain, gitignored):
    ```bash
    cp runner.env.example runner.env
    chmod 600 runner.env
-   # edit and fill in REPO_URL, ACCESS_TOKEN, OP_SERVICE_ACCOUNT_TOKEN
+   # edit and fill in REPO_URL, RUNNER_NAME, OP_SERVICE_ACCOUNT_TOKEN
    ```
+   Note: `ACCESS_TOKEN` (the GitHub PAT) is **not** in this file — it's resolved from 1Password by `secrets.env`, which is already committed.
 
-4. **Start**:
+5. **Start**:
    ```bash
-   docker compose up -d --build
+   op run --env-file=secrets.env -- docker compose up -d --build
    ```
 
-5. **Verify** in GitHub → repo → Settings → Actions → Runners. The runner should appear as **Idle** within ~30 seconds.
+6. **Verify** in GitHub → repo → Settings → Actions → Runners. The runner should appear as **Idle** within ~30 seconds.
 
 ## Serving more than one repo
 
@@ -43,9 +55,11 @@ Long-term: move your repos under a GitHub organization, change `RUNNER_SCOPE=org
 ## Updating
 
 ```bash
-docker compose pull
-docker compose up -d --build
+op run --env-file=secrets.env -- docker compose pull
+op run --env-file=secrets.env -- docker compose up -d --build --pull always
 ```
+
+Or just let `../containerupdater.sh` handle it — it wraps with `op run` automatically.
 
 ## Troubleshooting
 

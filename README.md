@@ -14,39 +14,69 @@ Personal home server stack. Each concern lives in its own directory with an inde
 ## Conventions
 
 - Each stack is a directory containing at minimum `docker-compose.yml`.
-- Stacks that rely on the shared root `.env` have a `.env` symlink pointing to `../.env`, so `docker compose up -d` from inside a stack picks up `TZ`/`PUID`/`PGID`/etc. without any flag juggling.
-- Stacks that need their own secrets (e.g. `runner/runner.env`) keep them local and gitignored.
+- **Non-secrets** (TZ, PUID, PGID, NAME_SERVERS) live in the shared root `.env`. Each stack has a `.env` symlink → `../.env`, so `docker compose up -d` inside a stack picks them up automatically.
+- **Secrets** (PIA creds, beszel key, GitHub PAT) live in **1Password** and are referenced from each stack's `secrets.env` (committed — these are `op://` pointers, not values). Resolved at up-time by `op run`.
+- One bootstrap secret — `OP_SERVICE_ACCOUNT_TOKEN` — lives plain in `runner/runner.env` (gitignored, chmod 600). It's the credential `op run` needs to authenticate, so it can't be behind an `op://` reference itself.
 - Shared persistent data stays at the repo root (`appdata/`, `beszel_data/`); stacks reference it via `../appdata/<svc>` bind mounts.
-- Host ports are allocated per stack — see the "Ports in use" table below. Pick unused ports for new stacks.
+- Host ports are allocated per stack — see the "Ports in use" table below.
+
+## Where every env var lives
+
+| Class | Examples | Where | Who fills it |
+|---|---|---|---|
+| Non-secret config | `TZ`, `PUID`, `PGID`, `NAME_SERVERS` | root `.env` (gitignored) | You, once |
+| Bootstrap secret | `OP_SERVICE_ACCOUNT_TOKEN` | `runner/runner.env` (gitignored) | You, once |
+| Runtime secrets | `BESZEL_AGENT_KEY`, `PIA_USERNAME`, `PIA_PASSWORD`, GitHub PAT, all app secrets | 1Password item `Home Server` (or app-specific items); referenced from each stack's `secrets.env` | You fill the 1P item once; `op run` resolves on every `docker compose up` forever |
 
 ## First-time setup
 
-1. Clone onto the server.
-2. `cp .env.example .env` and fill in shared values (timezone, PUID/PGID, PIA creds, etc.).
-3. Bring up whichever stacks you want:
+1. **Install `op` CLI** on the server — see `runner/README.md` for the Debian/Ubuntu install snippet.
+2. **Create the `Home Server` item in 1Password** (Private vault) with these fields:
+   - `beszel_agent_key`
+   - `pia_username`
+   - `pia_password`
+   - `github_runner_pat`
+3. **Create a 1Password service account** scoped to that vault. Copy its `ops_...` token.
+4. **Clone onto the server**, then:
    ```bash
-   cd home-automation && docker compose up -d
-   cd ../infra && docker compose up -d
-   cd ../media && docker compose up -d
+   cp .env.example .env
+   # edit .env — only non-secrets go here (TZ, PUID, PGID, NAME_SERVERS)
+
+   cp runner/runner.env.example runner/runner.env
+   chmod 600 runner/runner.env
+   # edit runner/runner.env — fill in REPO_URL, RUNNER_NAME, and the
+   # OP_SERVICE_ACCOUNT_TOKEN you copied in step 3
    ```
-4. For `runner/`, see [`runner/README.md`](runner/README.md) — it needs a GitHub PAT and a 1Password service-account token in its own `runner.env`.
+5. **Bring up the stacks.** Stacks with a `secrets.env` need `op run`; stacks without it (currently just `home-automation`) run plain:
+   ```bash
+   cd home-automation && docker compose up -d && cd ..
+   cd infra && op run --env-file=secrets.env -- docker compose up -d && cd ..
+   cd media && op run --env-file=secrets.env -- docker compose up -d && cd ..
+   cd runner && op run --env-file=secrets.env -- docker compose up -d --build && cd ..
+   ```
 
 ## Updating
 
-`containerupdater.sh` walks every stack directory, pulls fresh images, and recreates containers. Run manually or from cron:
+`containerupdater.sh` walks every stack, detects whether it has a `secrets.env`, wraps with `op run` accordingly, and updates. Run manually or from cron:
 
 ```bash
 ./containerupdater.sh
 ```
 
+It sources `OP_SERVICE_ACCOUNT_TOKEN` from `runner/runner.env` at the top so cron doesn't need the token in its own environment.
+
 ## Adding a new stack
 
 1. `mkdir newstack && cd newstack`
 2. Write `docker-compose.yml`. Pick ports not already in use (see table below). Bind to `127.0.0.1` if the service is internal-only.
-3. If the stack needs shared env vars: `ln -s ../.env .env`.
-   If it needs its own secrets: add `<stack>.env` (gitignored) + an `<stack>.env.example` template.
-4. `docker compose up -d`.
-5. `containerupdater.sh` picks it up automatically next run.
+3. If the stack needs shared non-secrets: `ln -s ../.env .env`.
+4. If the stack needs secrets:
+   - Add fields for them to the `Home Server` 1Password item (or a new dedicated item; just grant the service account access).
+   - Create `secrets.env` with `op://` refs (committed — they're just pointers).
+5. First bring-up:
+   - With secrets: `op run --env-file=secrets.env -- docker compose up -d --build`
+   - Without: `docker compose up -d --build`
+6. `containerupdater.sh` picks up the new stack automatically next run and wraps with `op run` if `secrets.env` is present.
 
 ## Ports in use
 

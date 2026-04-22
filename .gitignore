@@ -28,6 +28,8 @@ beszel_data/
 *.env
 # …but keep per-stack symlinks to the shared root .env
 !*/.env
+# …and per-stack secret-reference files (op:// pointers, no values)
+!*/secrets.env
 
 # runner local state volumes when mounted as bind mounts
 runner/runner-data/

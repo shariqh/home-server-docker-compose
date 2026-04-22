@@ -32,6 +32,11 @@ services:
       # `docker` CLI and docker compose honour DOCKER_HOST — so all docker
       # calls inside workflows go through the proxy, not the raw socket.
       DOCKER_HOST: tcp://docker-proxy:2375
+      # ACCESS_TOKEN is resolved from 1Password by `op run` at compose-up
+      # time (see secrets.env). The pass-through is explicit here so docker
+      # compose forwards it into the container where myoung34/github-runner
+      # uses it to register with GitHub.
+      ACCESS_TOKEN: ${ACCESS_TOKEN}
     volumes:
       # Persistent runner work/state across restarts.
       - runner-data:/tmp/runner
