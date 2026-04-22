@@ -26,12 +26,12 @@ Personal home server stack. Each concern lives in its own directory with an inde
 |---|---|---|---|
 | Non-secret config | `TZ`, `PUID`, `PGID`, `NAME_SERVERS` | root `.env` (gitignored) | You, once |
 | Bootstrap secret | `OP_SERVICE_ACCOUNT_TOKEN` | `runner/runner.env` (gitignored) | You, once |
-| Runtime secrets | `BESZEL_AGENT_KEY`, `PIA_USERNAME`, `PIA_PASSWORD`, GitHub PAT, all app secrets | 1Password item `Home Server` (or app-specific items); referenced from each stack's `secrets.env` | You fill the 1P item once; `op run` resolves on every `docker compose up` forever |
+| Runtime secrets | `BESZEL_AGENT_KEY`, `PIA_USERNAME`, `PIA_PASSWORD`, GitHub PAT, all app secrets | 1Password item `ubi-prod-envs` (or app-specific items); referenced from each stack's `secrets.env` | You fill the 1P item once; `op run` resolves on every `docker compose up` forever |
 
 ## First-time setup
 
 1. **Install `op` CLI** on the server — see `runner/README.md` for the Debian/Ubuntu install snippet.
-2. **Create the `Home Server` item in 1Password** (Private vault) with these fields:
+2. **Create the `ubi-prod-envs` item in 1Password** (Private vault) with these fields:
    - `beszel_agent_key`
    - `pia_username`
    - `pia_password`
@@ -71,7 +71,7 @@ It sources `OP_SERVICE_ACCOUNT_TOKEN` from `runner/runner.env` at the top so cro
 2. Write `docker-compose.yml`. Pick ports not already in use (see table below). Bind to `127.0.0.1` if the service is internal-only.
 3. If the stack needs shared non-secrets: `ln -s ../.env .env`.
 4. If the stack needs secrets:
-   - Add fields for them to the `Home Server` 1Password item (or a new dedicated item; just grant the service account access).
+   - Add fields for them to the `ubi-prod-envs` 1Password item (or a new dedicated item; just grant the service account access).
    - Create `secrets.env` with `op://` refs (committed — they're just pointers).
 5. First bring-up:
    - With secrets: `op run --env-file=secrets.env -- docker compose up -d --build`

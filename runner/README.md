@@ -20,10 +20,10 @@ Because the 1Password CLI is baked in, workflows can resolve secrets via `op run
 
 2. **GitHub PAT** with `repo` scope (or fine-grained token scoped to the target repo):
    https://github.com/settings/tokens/new
-   Save the `ghp_...` value as the `github_runner_pat` field in your `Home Server` 1Password item — it'll be resolved at container-up time via `secrets.env`.
+   Save the `ghp_...` value as the `github_runner_pat` field in your `ubi-prod-envs` 1Password item — it'll be resolved at container-up time via `secrets.env`.
 
 3. **1Password service account** (Settings → Developer → Service Accounts → Create).
-   - Grant read-only access to the `Home Server` vault.
+   - Grant read-only access to the `ubi-prod-envs` vault.
    - Copy the `ops_...` token.
 
 4. **Populate `runner.env`** (plain, gitignored):
