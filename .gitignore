@@ -1,26 +1,33 @@
-# Ignore draw.io files
+# draw.io source files
 *.drawio
 
-# Ignore all appdata files
+# appdata — persistent bind mounts, with a few tracked configs
 appdata/*
-
-# Allowlist specified appdata files
 !appdata/filebeat/filebeat.docker.yml
 !appdata/logstash/pipeline/nginx.conf
 !appdata/logstash/logstash.yml
 !appdata/lidarr/
 
-# Allowlist specified appdata folders
+# allowlist tracked swag configs
 !appdata/swag/
 appdata/swag/*
 !appdata/swag/nginx/
 appdata/swag/nginx/*
 !appdata/swag/nginx/site-confs/
 
-# Ignore any backup configs
+# backups (operator-managed)
 backup
 
-# Ignore MacOS stuff
+# macOS cruft
 .DS_Store
 
+# beszel persistent data
+beszel_data/
+
+# env files with real values
 *.env
+# …but keep per-stack symlinks to the shared root .env
+!*/.env
+
+# runner local state volumes when mounted as bind mounts
+runner/runner-data/
