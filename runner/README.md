@@ -6,40 +6,29 @@ Because the 1Password CLI is baked in, workflows can resolve secrets via `op run
 
 **Trust boundary:** this runner executes jobs from the configured repo with access to a Docker API (via a restricted socket proxy — see `docker-compose.yml`). Only point it at repos whose commits you trust, since a malicious workflow could still start and stop containers on this host.
 
+> Prerequisites from the root README: `op` CLI installed on the host, the `ubi-prod-envs` item created in 1Password, and a service account token. This README assumes those are done.
+
 ## First-time setup
 
-1. **Install `op` CLI** on the host (Debian/Ubuntu):
-   ```bash
-   curl -sS https://downloads.1password.com/linux/keys/1password.asc \
-     | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
-   echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' \
-     | sudo tee /etc/apt/sources.list.d/1password.list
-   sudo apt update && sudo apt install -y 1password-cli
-   op --version  # confirm 2.x
-   ```
-
-2. **GitHub PAT** with `repo` scope (or fine-grained token scoped to the target repo):
+1. **GitHub PAT** with `repo` scope (or fine-grained token scoped to the target repo):
    https://github.com/settings/tokens/new
-   Save the `ghp_...` value as the `github_runner_pat` field in your `ubi-prod-envs` 1Password item — it'll be resolved at container-up time via `secrets.env`.
+   Save the `ghp_...` value as the `github_runner_pat` field in your `ubi-prod-envs` 1Password item — it's resolved at container-up time via `secrets.env`.
 
-3. **1Password service account** (Settings → Developer → Service Accounts → Create).
-   - Grant read-only access to the `ubi-prod-envs` vault.
-   - Copy the `ops_...` token.
-
-4. **Populate `runner.env`** (plain, gitignored):
+2. **Populate `runner.env`** (plain, gitignored — only the bootstrap token + runner identity live here):
    ```bash
    cp runner.env.example runner.env
    chmod 600 runner.env
-   # edit and fill in REPO_URL, RUNNER_NAME, OP_SERVICE_ACCOUNT_TOKEN
+   # fill in REPO_URL, RUNNER_NAME, OP_SERVICE_ACCOUNT_TOKEN
    ```
-   Note: `ACCESS_TOKEN` (the GitHub PAT) is **not** in this file — it's resolved from 1Password by `secrets.env`, which is already committed.
+   `ACCESS_TOKEN` (the GitHub PAT) is **not** in this file — it comes from 1Password via `secrets.env`, which is already committed.
 
-5. **Start**:
+3. **Start**:
    ```bash
    op run --env-file=secrets.env -- docker compose up -d --build
    ```
+   At runtime the runner container itself also has `op` CLI baked in (via our Dockerfile), so workflows that check out app repos can `op run` on their own secrets — separate from the host-side `op run` you just ran to bring this container up.
 
-6. **Verify** in GitHub → repo → Settings → Actions → Runners. The runner should appear as **Idle** within ~30 seconds.
+4. **Verify** in GitHub → repo → Settings → Actions → Runners. The runner should appear as **Idle** within ~30 seconds.
 
 ## Serving more than one repo
 

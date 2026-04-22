@@ -30,7 +30,17 @@ Personal home server stack. Each concern lives in its own directory with an inde
 
 ## First-time setup
 
-1. **Install `op` CLI** on the server — see `runner/README.md` for the Debian/Ubuntu install snippet.
+1. **Install `op` CLI on the host** (Debian/Ubuntu):
+   ```bash
+   curl -sS https://downloads.1password.com/linux/keys/1password.asc \
+     | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+   echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' \
+     | sudo tee /etc/apt/sources.list.d/1password.list
+   sudo apt update && sudo apt install -y 1password-cli
+   op --version   # confirm 2.x
+   ```
+   (This is the **host** install — needed because `containerupdater.sh` and `op run ... docker compose up -d` both run on the host. The `runner/` container has its own copy of `op` baked in for workflows; that's separate.)
+
 2. **Create the `ubi-prod-envs` item in 1Password** (Private vault) with these fields:
    - `beszel_agent_key`
    - `pia_username`
