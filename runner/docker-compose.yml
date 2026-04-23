@@ -17,6 +17,7 @@ services:
       INFO: 1
       VERSION: 1
       POST: 1       # required for create / start / stop / build
+      SESSION: 1    # required for BuildKit/bake — /session upgrades HTTP to gRPC
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
