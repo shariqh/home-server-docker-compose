@@ -4,7 +4,7 @@ Dockerized runner (`myoung34/github-runner` + 1Password CLI). In the default con
 
 Because the 1Password CLI is baked in, workflows can resolve secrets via `op run --env-file=secrets.env -- <command>` at job time — no plaintext values are ever written to disk. The service-account token stays on this host.
 
-**Trust boundary:** this runner executes jobs from the configured repo with access to a Docker API (via a restricted socket proxy — see `docker-compose.yml`). Only point it at repos whose commits you trust, since a malicious workflow could still start and stop containers on this host.
+**Trust boundary:** this runner mounts the host Docker socket directly, so workflows get root-equivalent access to the host's Docker daemon. Acceptable for **single-user private repos** where every commit is yours. If you ever point this runner at a public or multi-contributor repo, put a socket proxy (e.g. `tecnativa/docker-socket-proxy`) in front — the `docker-compose.yml` had one originally; was removed after it kept blocking legitimate BuildKit traffic during our builds. History is in git.
 
 > Prerequisites from the root README: `op` CLI installed on the host, the `ubi-prod-envs` item created in 1Password, and a service account token. This README assumes those are done.
 
@@ -54,6 +54,4 @@ Or just let `../containerupdater.sh` handle it — it wraps with `op run` automa
 
 - **Runner shows Offline in GH** → `docker compose logs -f runner`; usually an auth error (bad PAT scope or typo).
 - **`op run` fails inside a job with "not signed in"** → confirm `OP_SERVICE_ACCOUNT_TOKEN` made it into the container: `docker compose exec runner env | grep OP_`.
-- **Can't reach host Docker** → the runner talks to the host socket via the `docker-proxy` service (over `DOCKER_HOST=tcp://docker-proxy:2375`), *not* a direct socket mount. Verify both legs:
-  - proxy has the host socket: `docker compose exec docker-proxy ls -l /var/run/docker.sock`
-  - runner can reach the proxy: `docker compose exec runner sh -lc 'docker version'`
+- **Can't reach host Docker** → verify the socket mount is intact inside the runner: `docker compose exec runner ls -l /var/run/docker.sock` and `docker compose exec runner sh -lc 'docker version'`. If docker version fails, the mount isn't landing — check the `volumes:` section of `docker-compose.yml`.

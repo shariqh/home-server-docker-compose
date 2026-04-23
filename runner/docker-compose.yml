@@ -1,44 +1,23 @@
 services:
-  # Narrow proxy in front of the host Docker socket. The runner talks to
-  # this over the internal compose network instead of mounting the raw
-  # socket, so a malicious workflow can only invoke the HTTP verbs +
-  # resource categories explicitly allow-listed below.
-  docker-proxy:
-    image: tecnativa/docker-socket-proxy:latest
-    container_name: github-runner-docker-proxy
-    restart: unless-stopped
-    environment:
-      # Allow-list: what this proxy exposes to the runner.
-      CONTAINERS: 1
-      IMAGES: 1
-      BUILD: 1
-      NETWORKS: 1
-      VOLUMES: 1
-      INFO: 1
-      VERSION: 1
-      POST: 1       # required for create / start / stop / build
-      SESSION: 1    # required for BuildKit/bake — /session upgrades HTTP to gRPC
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-
   runner:
     build: .
     image: home-server-github-runner:latest
     container_name: github-runner
     restart: unless-stopped
     env_file: runner.env
-    depends_on:
-      - docker-proxy
     environment:
-      # `docker` CLI and docker compose honour DOCKER_HOST — so all docker
-      # calls inside workflows go through the proxy, not the raw socket.
-      DOCKER_HOST: tcp://docker-proxy:2375
       # ACCESS_TOKEN is resolved from 1Password by `op run` at compose-up
       # time (see secrets.env). The pass-through is explicit here so docker
       # compose forwards it into the container where myoung34/github-runner
       # uses it to register with GitHub.
       ACCESS_TOKEN: ${ACCESS_TOKEN}
     volumes:
+      # Direct host Docker socket mount — workflows get root-equivalent
+      # access to the host Docker daemon. Acceptable for single-user
+      # private repos where every commit is trusted; replace with a
+      # socket proxy (e.g. tecnativa/docker-socket-proxy) if you ever
+      # point this runner at a public or multi-contributor repo.
+      - /var/run/docker.sock:/var/run/docker.sock
       # Persistent runner work/state across restarts.
       - runner-data:/tmp/runner
 
