@@ -71,7 +71,11 @@ Personal home server stack. Each concern lives in its own directory with an inde
    # edit runner/runner.env — fill in REPO_URL, RUNNER_NAME, and the
    # OP_SERVICE_ACCOUNT_TOKEN you copied in step 3
    ```
-5. **Bring up the stacks.** Stacks with a `secrets.env` need `op run`; stacks without it (currently just `home-automation`) run plain:
+5. **Bring up the stacks.** Easiest — one script that iterates all stacks and uses `op run` where needed:
+   ```bash
+   ./up-all.sh
+   ```
+   Or manually, per stack (stacks with `secrets.env` need `op run`; `home-automation` doesn't):
    ```bash
    cd home-automation && docker compose up -d && cd ..
    cd infra && op run --env-file=secrets.env -- docker compose up -d && cd ..

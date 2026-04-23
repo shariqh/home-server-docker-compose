@@ -23,6 +23,9 @@ if [ -f runner/runner.env ]; then
     set +a
 fi
 
+# Delegate image builds to buildx bake for faster/parallel builds.
+export COMPOSE_BAKE=true
+
 for dir in */; do
     compose="${dir}docker-compose.yml"
     [ -f "$compose" ] || continue
