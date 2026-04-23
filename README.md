@@ -49,7 +49,7 @@ Personal home server stack. Each concern lives in its own directory with an inde
    ```
    (This is the **host** install — needed because `containerupdater.sh` and `op run ... docker compose up -d` both run on the host. The `runner/` container has its own copy of `op` baked in for workflows; that's separate.)
 
-2. **Create a new vault** in 1Password called `home-server` (any name — just not `Private` or `Personal`; 1P disallows service-account access to those). Inside it, create an item called **`ubi-prod-envs`** with these fields:
+2. In your `dev-env-vars` vault (or any non-Private vault — 1P disallows service-account access to Private/Personal), create an item called **`ubi-prod-envs`** with these fields:
    - `beszel_agent_key`
    - `pia_username`
    - `pia_password`
@@ -57,7 +57,7 @@ Personal home server stack. Each concern lives in its own directory with an inde
 3. **Create a 1Password service account** scoped to the `home-server` vault:
    ```bash
    op service-account create "ubi-prod-runner" \
-     --vault "home-server:read_items"
+     --vault "dev-env-vars:read_items"
    # omit --expires-in entirely for a non-expiring token
    ```
    Copy the `ops_...` token it prints — 1P only shows it once.
