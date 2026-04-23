@@ -1,4 +1,4 @@
-FROM myoung34/github-runner:latest-ubuntu-noble
+FROM myoung34/github-runner:ubuntu-noble
 
 # Install the 1Password CLI so workflows can `op run -- <command>` to
 # resolve secret references at job time without ever writing plaintext
