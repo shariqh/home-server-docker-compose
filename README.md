@@ -32,10 +32,18 @@ Personal home server stack. Each concern lives in its own directory with an inde
 
 1. **Install `op` CLI on the host** (Debian/Ubuntu):
    ```bash
-   curl -sS https://downloads.1password.com/linux/keys/1password.asc \
-     | sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
-   echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' \
+   # Start clean so re-runs don't prompt on key overwrite / leave stale list files
+   sudo rm -f /usr/share/keyrings/1password-archive-keyring.gpg /etc/apt/sources.list.d/1password.list
+
+   # Import signing key
+   curl -fsSL https://downloads.1password.com/linux/keys/1password.asc \
+     | sudo gpg --dearmor -o /usr/share/keyrings/1password-archive-keyring.gpg
+
+   # The `deb ...` line MUST be on one physical line — no backslash-newline
+   # inside the quotes or apt will reject the file with "Malformed entry".
+   echo "deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main" \
      | sudo tee /etc/apt/sources.list.d/1password.list
+
    sudo apt update && sudo apt install -y 1password-cli
    op --version   # confirm 2.x
    ```
