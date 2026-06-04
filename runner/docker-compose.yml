@@ -21,5 +21,28 @@ services:
       # Persistent runner work/state across restarts.
       - runner-data:/tmp/runner
 
+  # PP backup runner: ORG-scoped to Coreworx-LLC so one runner backs all the
+  # project-portals repos when GitHub-hosted Actions are blocked (e.g. the
+  # Actions spending limit). Reuses the same image (1Password CLI baked in).
+  # Workflows opt in by targeting the unique `coreworx-backup` label, so this
+  # never steals jobs from the expense-tracker runner above.
+  runner-coreworx:
+    build: .
+    image: home-server-github-runner:latest
+    container_name: github-runner-coreworx
+    restart: unless-stopped
+    env_file: runner-coreworx.env
+    environment:
+      # Coreworx-LLC PAT (admin:org scope, to mint org registration tokens),
+      # resolved from 1Password by `op run` at compose-up time (secrets.env).
+      ACCESS_TOKEN: ${COREWORX_ACCESS_TOKEN}
+    volumes:
+      # Same direct socket mount as the runner above — fine for these trusted,
+      # single-owner private repos (every commit is yours/Braydon's). The
+      # coreworx-backup label keeps jobs scoped to our own workflows.
+      - /var/run/docker.sock:/var/run/docker.sock
+      - runner-data-coreworx:/tmp/runner
+
 volumes:
   runner-data:
+  runner-data-coreworx:

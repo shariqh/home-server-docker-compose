@@ -41,6 +41,39 @@ Sharing `runner-data` between duplicated services causes runners to clobber each
 
 Long-term: move your repos under a GitHub organization, change `RUNNER_SCOPE=org` and point `REPO_URL` at the org URL. One runner serves every repo in the org.
 
+## Coreworx-LLC backup runner (`runner-coreworx`)
+
+A second, **org-scoped** service that backs every `project-portals-*` repo in the
+**Coreworx-LLC** org — its purpose is to keep CI running when GitHub-hosted
+Actions are blocked (e.g. the Actions spending limit was hit). It reuses this
+same image and only picks up jobs that target the unique **`coreworx-backup`**
+label, so it never competes with the expense-tracker `runner` above.
+
+First-time setup:
+
+1. **Create a Coreworx-LLC PAT** with **`admin:org`** scope (classic token; org
+   runner registration needs it) — also tick `repo` for private-repo access.
+   Save it as a new field **`coreworx_runner_pat`** in the same 1Password item
+   (`ubi-prod-envs` → "Home Server"). `secrets.env` already points at it.
+2. **Create the env file** (gitignored):
+   ```bash
+   cp runner/runner-coreworx.env.example runner/runner-coreworx.env
+   chmod 600 runner/runner-coreworx.env
+   # set OP_SERVICE_ACCOUNT_TOKEN (same value as runner.env)
+   ```
+3. **Start just this service** (leaves the expense-tracker runner alone):
+   ```bash
+   op run --env-file=secrets.env -- docker compose up -d --build runner-coreworx
+   ```
+4. **Verify** in github.com/organizations/Coreworx-LLC → Settings → Actions →
+   Runners → `ubi-prod-coreworx-backup` should show **Idle** within ~30s.
+
+Workflows route to it by setting `runs-on: [self-hosted, coreworx-backup]`
+(or, for the reusable platform workflows, the `runner` input = `coreworx-backup`).
+Tear down when GitHub-hosted billing is restored: `docker compose stop
+runner-coreworx && docker compose rm -f runner-coreworx`, and remove it from the
+org Runners UI.
+
 ## Updating
 
 ```bash
