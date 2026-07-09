@@ -21,7 +21,15 @@ import:
   log: /config/beets-import.log
 
 match:
-  strong_rec_thresh: 0.04   # auto-accept threshold used by -q mode (lower = stricter)
+  # auto-accept threshold used by -q mode (lower = stricter). beets' own
+  # default (0.04) is tuned for multi-track music/AcoustID matching and is
+  # far too strict for beets-audible: a genuinely correct audiobook match
+  # (verified: "The Gate of the Feral Gods" -> Audible B09GCYRZRQ) lands at
+  # distance 0.17. Raised to 0.20 (comfortable margin above 0.17) so real
+  # matches auto-file in quiet mode while unmatchable books (no filename/tag
+  # hints -> zero candidates) still always park in _needs-review regardless
+  # of this threshold.
+  strong_rec_thresh: 0.20
 
 audible:
   match_chapters: yes
