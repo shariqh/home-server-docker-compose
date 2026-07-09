@@ -27,7 +27,8 @@ as the player.
 flowchart TD
     D[Downloaded .m4b/.m4a] -->|drop| INBOX["/mnt/media/audiobook-inbox"]
     subgraph ORG["audiobook-organizer container (daily + on-demand)"]
-      INBOX --> PRE["organize.sh: .m4a→.m4b rename,<br/>strip (n) markers, one-folder-per-book"]
+      INBOX --> MERGE["merge_to_m4b.py: multi-file folder<br/>→ one chaptered .m4b"]
+      MERGE --> PRE["organize.sh: .m4a→.m4b rename,<br/>strip (n) markers, one-folder-per-book"]
       PRE --> BEETS["beet import (beets-audible)<br/>Audnexus/Audible match"]
       BEETS -->|confident| FILE["file into<br/>Author/Title, Book N/<br/>+ embed tags + cover.jpg"]
       BEETS -->|unsure| REVIEW["/books/_needs-review"]
@@ -77,6 +78,24 @@ collections. After each organize pass, `plex_sync.py`:
 It's best-effort: if Plex is unreachable or no token is found, it logs and skips
 without failing the organize pass. The Plex token is read **read-only** from the
 mounted `Preferences.xml` (no separate secret to manage).
+
+## Multi-file books & editions (e.g. Harry Potter Full-Cast)
+
+Some books arrive as **many audio parts** (a folder of numbered `.mp3`s) rather
+than a single file. Drop the whole set **inside one folder** (one book = one
+folder; e.g. unzip each download into its own folder). `merge_to_m4b.py` then
+concatenates the parts into a single chaptered `.m4b` (one chapter per part,
+tags + cover carried over) before matching — so they end up consistent with the
+single-file books. Merging re-encodes audio, so it takes a few minutes per book.
+
+Multiple **editions** of the same title coexist cleanly as long as their Audible
+titles differ (they usually do — e.g. `Harry Potter and the Sorcerer's Stone`
+vs `... (Full-Cast Edition)`). They file into separate folders and don't
+overwrite each other. `plex_sync.py` puts any album whose title contains
+"Full Cast"/"Full-Cast" into a **`<Series> (Full Cast)`** collection, keeping it
+separate from the original narration's collection. Note: full-cast rips often
+match Audible at lower confidence, so they may **park in `_needs-review`** for a
+quick confirm in Audiobookshelf.
 
 ## Everyday use
 

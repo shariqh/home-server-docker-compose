@@ -94,6 +94,20 @@ park_path() {
 
 echo "[organize] preprocessing $INBOX"
 
+# 0) Merge multi-file books into one chaptered .m4b. A dropped folder holding
+# more than one audio file (e.g. a set of numbered .mp3 parts) is merged into a
+# single .m4b (one chapter per part) before matching. Single-file books and
+# loose files are untouched. Runs only over inbox top-level folders.
+find "$INBOX" -mindepth 1 -maxdepth 1 -type d -print0 | while IFS= read -r -d '' d; do
+  parts="$(find "$d" -maxdepth 1 -type f \( -iname '*.mp3' -o -iname '*.m4a' \
+    -o -iname '*.m4b' -o -iname '*.aac' -o -iname '*.flac' -o -iname '*.ogg' \
+    -o -iname '*.opus' -o -iname '*.wav' \) | wc -l | tr -d ' ')"
+  if [ "$parts" -gt 1 ]; then
+    echo "[organize] merging $parts parts in $(basename "$d")"
+    python3 /usr/local/bin/merge_to_m4b.py "$d" || note_error "merge failed for $d"
+  fi
+done
+
 # 1) Normalize .m4a -> .m4b. .m4a and .m4b are the same MP4/AAC container, so
 # a plain rename is lossless and preserves chapters, tags, and every stream.
 # We deliberately avoid an ffmpeg remux here: the strict m4b/ipod muxer

@@ -132,14 +132,20 @@ def main():
                 except Exception as exc:
                     print(f"[plex-sync] cover upload failed for {cover}: {exc}")
 
-            # 2) Collection by series (idempotent).
+            # 2) Collection by series (idempotent). Full-cast editions get their
+            # own "<Series> (Full Cast)" collection so they stay distinct from
+            # the original narration.
             series = series_of(m4b)
             if series:
+                title = (album.get("title") or "").lower()
+                collection = series
+                if "full cast" in title or "full-cast" in title:
+                    collection = f"{series} (Full Cast)"
                 query = urllib.parse.urlencode(
                     {
                         "type": ALBUM_TYPE,
                         "id": ak,
-                        "collection[0].tag.tag": series,
+                        "collection[0].tag.tag": collection,
                         "X-Plex-Token": tok,
                     }
                 )
