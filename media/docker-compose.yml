@@ -110,3 +110,32 @@ services:
       - "6881:6881"
       - "6881:6881/udp"
       - "8080:8080"
+
+  audiobook-organizer:
+    build: ./audiobook-organizer
+    image: audiobook-organizer:latest
+    container_name: audiobook-organizer
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - BEETSDIR=/config
+    volumes:
+      - /mnt/media/audiobook-inbox:/inbox
+      - /mnt/media/books:/books
+      - ../appdata/audiobook-organizer:/config
+      - ./audiobook-organizer/config.yaml:/config/config.yaml:ro
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - /mnt/media/books:/audiobooks
+      - ../appdata/audiobookshelf/config:/config
+      - ../appdata/audiobookshelf/metadata:/metadata
+    ports:
+      - "13378:80"
