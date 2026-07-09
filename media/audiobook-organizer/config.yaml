@@ -1,0 +1,50 @@
+directory: /books
+library: /config/library.db
+
+plugins:
+  - audible
+  - fromfilename
+  - scrub
+  - fetchart
+  - edit
+
+# musicbrainz doesn't help for audiobooks; disable it so Audible is the
+# only metadata source considered (per beets-audible's own recommended config)
+musicbrainz:
+  enabled: no
+
+import:
+  move: yes
+  write: yes
+  quiet_fallback: skip      # in -q (daily) mode, skip anything not confidently matched
+  timid: no
+  log: /config/beets-import.log
+
+match:
+  strong_rec_thresh: 0.04   # auto-accept threshold used by -q mode (lower = stricter)
+
+audible:
+  match_chapters: yes
+  data_source_mismatch_penalty: 0.0   # no competing data sources are enabled
+  fetch_art: yes
+  keep_series_reference_in_title: yes
+  keep_series_reference_in_subtitle: yes
+  include_narrator_in_artists: no
+  write_description_file: no
+  write_reader_file: no
+
+fetchart:
+  art_filename: cover   # written as cover.jpg alongside each book
+  sources:
+    - filesystem
+    - coverart
+
+# The Audible plugin exposes series info as the flexible attributes
+# series_name / series_position, not as part of $album, so "Title, Book N"
+# is built explicitly here for series books (falls back to $album for
+# stand-alone books with no series_position).
+paths:
+  "series_position::.+": $albumartist/$album, Book $series_position%aunique{}/$album, Book $series_position
+  default: $albumartist/$album%aunique{}/$album
+  singleton: $albumartist/$title
+  comp: $albumartist/$album%aunique{}/$album
