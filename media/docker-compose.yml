@@ -127,6 +127,11 @@ services:
       # give the non-root (1000) user a writable HOME so caches (tldextract,
       # etc.) land under /config instead of the unwritable /.cache
       - HOME=/config
+    # use public resolvers directly — the host/embedded DNS was intermittently
+    # failing to resolve the Audible API + cover CDN mid-run
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     volumes:
       - /mnt/media/audiobook-inbox:/inbox
       - /mnt/media/books:/books
@@ -139,6 +144,9 @@ services:
     restart: unless-stopped
     environment:
       - TZ=${TZ}
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
     volumes:
       - /mnt/media/books:/audiobooks
       - ../appdata/audiobookshelf/config:/config

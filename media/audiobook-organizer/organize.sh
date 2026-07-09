@@ -94,17 +94,16 @@ park_path() {
 
 echo "[organize] preprocessing $INBOX"
 
-# 1) Lossless remux any .m4a -> .m4b (stream copy, no re-encode)
-find "$INBOX" -type f -iname '*.m4a' -print0 | while IFS= read -r -d '' f; do
+# 1) Normalize .m4a -> .m4b. .m4a and .m4b are the same MP4/AAC container, so
+# a plain rename is lossless and preserves chapters, tags, and every stream.
+# We deliberately avoid an ffmpeg remux here: the strict m4b/ipod muxer
+# rejects some perfectly valid inputs (e.g. timed-text chapter tracks) and
+# there is nothing to transcode. Also scan $REVIEW so a previously-parked
+# .m4a gets normalized on a later pass.
+find "$INBOX" "$REVIEW" -type f -iname '*.m4a' -print0 | while IFS= read -r -d '' f; do
   out="${f%.*}.m4b"
-  echo "[organize] remux $(basename "$f") -> $(basename "$out")"
-  if ffmpeg -nostdin -v error -i "$f" -map 0 -c copy -movflags +faststart "$out"; then
-    rm -f "$f"
-  else
-    note_error "remux failed for $f; parking original instead of leaving it orphaned in inbox"
-    rm -f "$out"
-    park_path "$f"
-  fi
+  echo "[organize] rename $(basename "$f") -> $(basename "$out")"
+  safe_mv "$f" "$out" || note_error "could not rename $f -> $out"
 done
 
 # 2) Strip macOS duplicate markers like " (1)" before the extension
