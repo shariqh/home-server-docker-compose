@@ -124,6 +124,9 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - BEETSDIR=/config
+      # give the non-root (1000) user a writable HOME so caches (tldextract,
+      # etc.) land under /config instead of the unwritable /.cache
+      - HOME=/config
     volumes:
       - /mnt/media/audiobook-inbox:/inbox
       - /mnt/media/books:/books
