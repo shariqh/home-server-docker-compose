@@ -127,6 +127,12 @@ services:
       # give the non-root (1000) user a writable HOME so caches (tldextract,
       # etc.) land under /config instead of the unwritable /.cache
       - HOME=/config
+      # Plex endpoint for the post-organize cover + collection sync (plex_sync.py).
+      # Plex runs network_mode:host, reached via the host gateway below.
+      - PLEX_URL=http://host.docker.internal:32400
+    # reach the host (for Plex on :32400) from this bridge container
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     # use public resolvers directly — the host/embedded DNS was intermittently
     # failing to resolve the Audible API + cover CDN mid-run
     dns:
@@ -137,6 +143,9 @@ services:
       - /mnt/media/books:/books
       - ../appdata/audiobook-organizer:/config
       - ./audiobook-organizer/config.yaml:/config/config.yaml:ro
+      # read-only access to Plex's token so plex_sync.py can call the API
+      # without storing a separate secret
+      - "../appdata/plex/Library/Application Support/Plex Media Server/Preferences.xml:/plex-prefs.xml:ro"
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest

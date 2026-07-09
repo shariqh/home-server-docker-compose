@@ -13,6 +13,7 @@ ENV BEETSDIR=/config
 
 COPY organize.sh /usr/local/bin/organize
 COPY entrypoint.sh /usr/local/bin/entrypoint
+COPY plex_sync.py /usr/local/bin/plex_sync.py
 RUN chmod +x /usr/local/bin/organize /usr/local/bin/entrypoint
 
 ENTRYPOINT ["/usr/bin/tini", "--"]

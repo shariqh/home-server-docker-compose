@@ -137,6 +137,11 @@ find "$INBOX" -mindepth 1 -maxdepth 1 \( -type d -o -type f \) -print0 | while I
   park_path "$entry"
 done
 
+# 5) Push covers + build series collections in Plex (best-effort; the new
+# Plex Music agent won't show local audiobook art on its own, and series
+# collections feed Prologue). Never fails the organize pass.
+python3 /usr/local/bin/plex_sync.py || echo "[organize] plex sync skipped/failed (non-fatal)" >&2
+
 TOTAL_ERRORS="$(cat "$ERR_COUNT_FILE" 2>/dev/null || echo 0)"
 if [ "$TOTAL_ERRORS" -gt 0 ]; then
   echo "[organize] done with errors: $TOTAL_ERRORS item(s) had a park/move failure, see WARN lines above" >&2
