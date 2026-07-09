@@ -116,6 +116,9 @@ services:
     image: audiobook-organizer:latest
     container_name: audiobook-organizer
     restart: unless-stopped
+    # Run as 1000:1000 (not root) so writes land correctly on the
+    # Synology-backed /mnt/media share, matching the other media services.
+    user: "${PUID}:${PGID}"
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
