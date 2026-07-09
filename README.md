@@ -8,7 +8,7 @@ Personal home server stack. Each concern lives in its own directory with an inde
 |---|---|
 | `home-automation/` | Home Assistant, Z-Wave JS UI |
 | `infra/` | Portainer, autoheal, beszel + beszel-agent (monitoring) |
-| `media/` | Plex, Radarr, Sonarr, Lidarr, Jackett, qBittorrent (WireGuard) |
+| `media/` | Plex, Radarr, Sonarr, Lidarr, Jackett, qBittorrent (WireGuard), Audiobookshelf, audiobook-organizer |
 | `runner/` | Self-hosted GitHub Actions runner (builds + deploys app repos) |
 
 ## Conventions
@@ -122,6 +122,25 @@ It sources `OP_SERVICE_ACCOUNT_TOKEN` from `runner/runner.env` at the top so cro
 | media | 9117 | Jackett |
 | media | 8080 | qBittorrent WebUI |
 | media | 6881, 6881/udp | qBittorrent peer |
+| media | 13378 | Audiobookshelf |
+
+## Audiobooks
+
+Audiobooks are organized by the `audiobook-organizer` container (beets + [beets-audible](https://github.com/Neurrone/beets-audible)) and reviewed/matched via **Audiobookshelf** (`http://<server-ip>:13378`). Plex + Prologue remain the player.
+
+**Normal flow:**
+1. Drop `.m4b`/`.m4a` files into `/mnt/media/audiobook-inbox` (a sibling of `books`, outside Plex's/ABS's library roots so half-copied files aren't indexed).
+2. A **daily pass** (cron loop in the container) remuxes any `.m4a`→`.m4b` losslessly, strips macOS `(1)` markers, and auto-files **confident** Audible matches into `/mnt/media/books/<Author>/<Title, Book N>/` with an embedded `cover.jpg`.
+3. **Unsure** matches (below the match threshold) are parked in `/mnt/media/books/_needs-review/` — never guessed into the library. A `.plexignore` there keeps Plex from indexing them; Audiobookshelf still shows them.
+
+**Fixing an unsure book (from phone/browser, no SSH):** open it in Audiobookshelf → **edit (✏️) → Match** tab → search Audible → save → run **Quick Embed** (writes corrected tags into the `.m4b`). The next daily pass reads those tags and re-files it correctly on disk for Plex/Prologue.
+
+**On-demand / interactive import** (e.g. a fresh batch you want to confirm now):
+```bash
+docker exec -it audiobook-organizer organize --interactive
+```
+
+> **Match-threshold note:** the daily auto-file threshold (`match.strong_rec_thresh` in `media/audiobook-organizer/config.yaml`) is set to `0.20`. This is validated against *under-parking* confident books but not against a rare *wrong-but-moderate-confidence* auto-match — watch `_needs-review` and Audiobookshelf for any mis-shelved books over the first several real runs. Tracked in issue #3.
 
 ## Home Assistant & Z-Wave — initial configuration
 
