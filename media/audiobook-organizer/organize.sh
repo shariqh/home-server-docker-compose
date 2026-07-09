@@ -12,6 +12,86 @@ mkdir -p "$REVIEW"
 INTERACTIVE=0
 [ "${1:-}" = "--interactive" ] && INTERACTIVE=1
 
+# Error counter lives in a file because the find|while pipelines below run
+# in subshells and can't mutate a parent-shell variable. Every place that
+# fails to safely file or park an input increments this.
+ERR_COUNT_FILE="$(mktemp)"
+echo 0 > "$ERR_COUNT_FILE"
+trap 'rm -f "$ERR_COUNT_FILE"' EXIT
+
+note_error() {
+  # note_error <message>: log to stderr and bump the shared error counter.
+  echo "[organize] WARN $1" >&2
+  local n
+  n="$(cat "$ERR_COUNT_FILE" 2>/dev/null || echo 0)"
+  echo "$((n + 1))" > "$ERR_COUNT_FILE"
+}
+
+safe_mv() {
+  # safe_mv <src> <dest>: move src to the exact path dest, never clobbering
+  # an existing file. On a name collision, disambiguate the destination so
+  # the file still gets moved instead of silently staying at src (mv -n
+  # would otherwise no-op and leave it behind). Returns 0 on success.
+  local src="$1" dest="$2" destdir base stem ext i
+  destdir="$(dirname "$dest")"
+  base="$(basename "$dest")"
+
+  if [ -e "$dest" ]; then
+    stem="${base%.*}"
+    ext="${base##*.}"
+    if [ "$stem" = "$ext" ]; then
+      # no extension
+      stem="$base"; ext=""
+    fi
+    i=1
+    while :; do
+      if [ -n "$ext" ] && [ "$ext" != "$base" ]; then
+        dest="$destdir/${stem} (dup-$$-$i).${ext}"
+      else
+        dest="$destdir/${base} (dup-$$-$i)"
+      fi
+      [ -e "$dest" ] || break
+      i=$((i + 1))
+    done
+    echo "[organize] WARN destination collision for $base, renaming to $(basename "$dest")" >&2
+  fi
+
+  if mv -n "$src" "$dest" 2>/dev/null && [ -e "$dest" ] && [ ! -e "$src" ]; then
+    return 0
+  fi
+
+  note_error "move failed: $src -> $dest"
+  return 1
+}
+
+park_path() {
+  # park_path <path>: park a leftover inbox entry under $REVIEW. Directories
+  # are moved as-is (one-book-per-folder already true). Loose files are
+  # wrapped in their own folder first so $REVIEW stays uniformly
+  # one-folder-per-book, mirroring the step 3 wrap convention.
+  local p="$1" base name dir
+  base="$(basename "$p")"
+  if [ -d "$p" ]; then
+    echo "[organize] parking for review: $base"
+    safe_mv "$p" "$REVIEW/$base"
+  else
+    name="${base%.*}"
+    [ -z "$name" ] && name="$base"
+    dir="$INBOX/$name"
+    if [ -e "$dir" ]; then
+      dir="$INBOX/${name} (review-$$)"
+    fi
+    if mkdir -p "$dir" && safe_mv "$p" "$dir/$base"; then
+      echo "[organize] parking for review: $name/$base"
+      if ! safe_mv "$dir" "$REVIEW/$(basename "$dir")"; then
+        note_error "failed to park wrapped file $p (left at $dir)"
+      fi
+    else
+      note_error "failed to wrap+park loose file: $p"
+    fi
+  fi
+}
+
 echo "[organize] preprocessing $INBOX"
 
 # 1) Lossless remux any .m4a -> .m4b (stream copy, no re-encode)
@@ -21,21 +101,26 @@ find "$INBOX" -type f -iname '*.m4a' -print0 | while IFS= read -r -d '' f; do
   if ffmpeg -nostdin -v error -i "$f" -map 0 -c copy -movflags +faststart "$out"; then
     rm -f "$f"
   else
-    echo "[organize] WARN remux failed for $f (leaving as-is)" >&2
+    note_error "remux failed for $f; parking original instead of leaving it orphaned in inbox"
+    rm -f "$out"
+    park_path "$f"
   fi
 done
 
 # 2) Strip macOS duplicate markers like " (1)" before the extension
 find "$INBOX" -type f -iname '*.m4b' -print0 | while IFS= read -r -d '' f; do
   clean="$(echo "$f" | sed -E 's/ \([0-9]+\)(\.[A-Za-z0-9]+)$/\1/')"
-  [ "$clean" != "$f" ] && mv -n "$f" "$clean"
+  if [ "$clean" != "$f" ]; then
+    safe_mv "$f" "$clean" || true
+  fi
 done
 
 # 3) beets-audible expects one book per folder: wrap loose top-level files
 find "$INBOX" -maxdepth 1 -type f -iname '*.m4b' -print0 | while IFS= read -r -d '' f; do
   base="$(basename "$f")"; name="${base%.*}"
   dir="$INBOX/$name"
-  mkdir -p "$dir"; mv -n "$f" "$dir/"
+  mkdir -p "$dir"
+  safe_mv "$f" "$dir/$base" || true
 done
 
 echo "[organize] importing (interactive=$INTERACTIVE)"
@@ -45,10 +130,18 @@ else
   beet import -q "$INBOX" "$REVIEW"
 fi
 
-# 4) Anything still in the inbox was not confidently matched -> park for review
-find "$INBOX" -mindepth 1 -maxdepth 1 -type d -print0 | while IFS= read -r -d '' d; do
-  echo "[organize] parking for review: $(basename "$d")"
-  mv -n "$d" "$REVIEW/"
+# 4) Anything still in the inbox was not confidently matched -> park for
+# review. Catches both per-book directories (the common case) and any
+# loose files left behind (e.g. a book that failed remux and was parked
+# above, or any other stray file) so nothing sits in the inbox unseen.
+find "$INBOX" -mindepth 1 -maxdepth 1 \( -type d -o -type f \) -print0 | while IFS= read -r -d '' entry; do
+  park_path "$entry"
 done
+
+TOTAL_ERRORS="$(cat "$ERR_COUNT_FILE" 2>/dev/null || echo 0)"
+if [ "$TOTAL_ERRORS" -gt 0 ]; then
+  echo "[organize] done with errors: $TOTAL_ERRORS item(s) had a park/move failure, see WARN lines above" >&2
+  exit 1
+fi
 
 echo "[organize] done"
