@@ -48,12 +48,26 @@ def merge_folder(folder):
         return False  # single-file (or empty) — nothing to merge
 
     paths = [os.path.join(folder, f) for f in files]
-    durations, first_tags = [], {}
-    for i, p in enumerate(paths):
+    # Gather tags across ALL parts (first non-empty value per key) — the first
+    # part is often a short "intro"/"credits" clip with no album/artist, which
+    # would otherwise leave the merged book untitled.
+    durations, tags = [], {}
+    for p in paths:
         info = ffprobe(p)
         durations.append(float(info["format"]["duration"]))
-        if i == 0:
-            first_tags = {k.lower(): v for k, v in (info["format"].get("tags") or {}).items()}
+        for k, v in (info["format"].get("tags") or {}).items():
+            k = k.lower()
+            if k not in tags and v and str(v).strip():
+                tags[k] = v
+    # Fall back to the folder / parent-folder names so a book is never left
+    # untitled or artist-less (Plex would show it as "Various Artists").
+    folder_name = os.path.basename(folder)
+    author = os.path.basename(os.path.dirname(folder))
+    tags.setdefault("album", folder_name)
+    tags.setdefault("title", tags["album"])
+    artist = tags.get("artist") or tags.get("album_artist") or author
+    tags["artist"] = artist
+    tags["album_artist"] = tags.get("album_artist") or artist
     total_dur = sum(durations)
     total_size = sum(os.path.getsize(p) for p in paths)
     # match the source's effective bitrate (avoids quality loss / bloat), 64–320k
@@ -99,8 +113,8 @@ def merge_folder(folder):
             fh.write(";FFMETADATA1\n")
             for key in ("album", "artist", "album_artist", "title", "genre",
                         "date", "composer", "publisher", "comment"):
-                if first_tags.get(key):
-                    fh.write("%s=%s\n" % (key, esc(first_tags[key])))
+                if tags.get(key):
+                    fh.write("%s=%s\n" % (key, esc(tags[key])))
             start = 0.0
             for i, d in enumerate(durations):
                 fh.write("[CHAPTER]\nTIMEBASE=1/1000\nSTART=%d\nEND=%d\ntitle=Part %d\n"
