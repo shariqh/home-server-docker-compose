@@ -139,7 +139,12 @@ def main():
             if series:
                 title = (album.get("title") or "").lower()
                 collection = series
-                if "full cast" in title or "full-cast" in title:
+                # Only tag a "(Full Cast)" collection if the series name itself
+                # doesn't already distinguish the edition (Audible often gives
+                # full-cast its own series, e.g. "Harry Potter (Full-Cast
+                # Editions)"), to avoid a doubled "... (Full Cast)" name.
+                series_says_fc = "full cast" in series.lower() or "full-cast" in series.lower()
+                if ("full cast" in title or "full-cast" in title) and not series_says_fc:
                     collection = f"{series} (Full Cast)"
                 query = urllib.parse.urlencode(
                     {
