@@ -9,7 +9,6 @@ Personal home server stack. Each concern lives in its own directory with an inde
 | `home-automation/` | Home Assistant, Z-Wave JS UI |
 | `infra/` | Portainer, autoheal, beszel + beszel-agent (monitoring) |
 | `media/` | Plex, Radarr, Sonarr, Lidarr, Jackett, qBittorrent (WireGuard), Audiobookshelf, audiobook-organizer |
-| `runner/` | Self-hosted GitHub Actions runner (builds + deploys app repos) |
 
 ## Conventions
 
@@ -66,10 +65,9 @@ Personal home server stack. Each concern lives in its own directory with an inde
    cp .env.example .env
    # edit .env — only non-secrets go here (TZ, PUID, PGID, NAME_SERVERS)
 
-   cp runner/runner.env.example runner/runner.env
-   chmod 600 runner/runner.env
-   # edit runner/runner.env — fill in REPO_URL, RUNNER_NAME, and the
-   # OP_SERVICE_ACCOUNT_TOKEN you copied in step 3
+   cp op.env.example op.env
+   chmod 600 op.env
+   # edit op.env — paste the OP_SERVICE_ACCOUNT_TOKEN you copied in step 3
    ```
 5. **Bring up the stacks.** Easiest — one script that iterates all stacks and uses `op run` where needed:
    ```bash
@@ -80,7 +78,6 @@ Personal home server stack. Each concern lives in its own directory with an inde
    cd home-automation && docker compose up -d && cd ..
    cd infra && op run --env-file=secrets.env -- docker compose up -d && cd ..
    cd media && op run --env-file=secrets.env -- docker compose up -d && cd ..
-   cd runner && op run --env-file=secrets.env -- docker compose up -d --build && cd ..
    ```
 
 ## Updating
@@ -91,7 +88,7 @@ Personal home server stack. Each concern lives in its own directory with an inde
 ./containerupdater.sh
 ```
 
-It sources `OP_SERVICE_ACCOUNT_TOKEN` from `runner/runner.env` at the top so cron doesn't need the token in its own environment.
+It sources `OP_SERVICE_ACCOUNT_TOKEN` from `op.env` at the top so cron doesn't need the token in its own environment.
 
 ## Adding a new stack
 

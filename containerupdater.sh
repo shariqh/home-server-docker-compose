@@ -14,12 +14,11 @@ set -uo pipefail
 cd "$(dirname "$0")"
 
 # Pull OP_SERVICE_ACCOUNT_TOKEN into the script's environment so `op run`
-# can authenticate. runner.env is the single place this bootstrap token
-# lives — we source it here rather than maintain a duplicate copy.
-if [ -f runner/runner.env ]; then
+# can authenticate. op.env at the repo root is the single home of this token.
+if [ -f op.env ]; then
     set -a
     # shellcheck disable=SC1091
-    . runner/runner.env
+    . op.env
     set +a
 fi
 

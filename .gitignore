@@ -33,3 +33,4 @@ beszel_data/
 
 # runner local state volumes when mounted as bind mounts
 runner/runner-data/
+op.env

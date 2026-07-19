@@ -9,11 +9,12 @@ set -uo pipefail
 
 cd "$(dirname "$0")"
 
-# Bootstrap OP_SERVICE_ACCOUNT_TOKEN so `op run` can authenticate.
-if [ -f runner/runner.env ]; then
+# Bootstrap OP_SERVICE_ACCOUNT_TOKEN so `op run` can authenticate (op.env,
+# git-ignored; see op.env.example).
+if [ -f op.env ]; then
     set -a
     # shellcheck disable=SC1091
-    . runner/runner.env
+    . op.env
     set +a
 fi
 
